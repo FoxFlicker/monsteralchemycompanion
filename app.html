@@ -63,7 +63,56 @@
 
 /* Do not show placeholder initials through transparent pixel-art sprites. */
 .placeholder:has(> img) > span:first-child,.craft-icon:has(> img) > span:first-child{visibility:hidden}
-.drop-source{color:#e8aaa0;font-size:10px;font-weight:700;text-align:center;line-height:1.1}</style>
+.drop-source{color:#e8aaa0;font-size:10px;font-weight:700;text-align:center;line-height:1.1}
+.inventory-tier{grid-column:1/-1;margin:18px 0 2px;border-bottom:1px solid #7b653f;padding-bottom:7px;color:var(--gold);font-size:18px;font-weight:780}
+.inventory-tier:first-child{margin-top:0}
+.inventory-grid:has(.inventory-tier){align-items:stretch}
+.inv-card[data-kind="monster"] .placeholder.monster{width:90px;min-height:83px;font-size:22px}
+.crafted.monster .craft-icon{width:64px;height:58px;min-height:58px;font-size:18px}
+.info-button{width:39px;height:39px;padding:0;display:grid;place-items:center;border:1px solid var(--gold);border-radius:11px;background:#30253d;color:var(--gold);font:800 25px/1 Georgia,serif}
+.info-button:hover{background:#473450}
+.monster-recipe{display:none;text-align:left}
+@media (hover:hover) and (pointer:fine){.inv-card[data-kind="monster"]:hover .monster-name,.crafted.monster:hover .monster-name{display:none}.inv-card[data-kind="monster"]:hover .monster-recipe,.crafted.monster:hover .monster-recipe{display:block}}
+.craft-grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}
+.crafted,.crafted.chosen{min-height:148px;align-items:center;justify-content:flex-start;text-align:center;gap:10px;padding:12px}
+.crafted .craft-top{width:100%;justify-content:center}
+.crafted .craft-name{width:100%;min-height:0;line-height:1.35}
+.crafted .craft-icon{width:64px;height:58px;min-height:58px;font-size:18px}
+.crafted .hover-recipe{display:none;font-size:11px;font-weight:600;line-height:1.4;overflow-wrap:anywhere;text-align:left}
+.recipe-line{display:block}
+.recipe-line+.recipe-line{margin-top:2px}
+@media (hover:hover) and (pointer:fine){.crafted:hover .display-name{display:none}.crafted:hover .hover-recipe{display:block}}
+.crafted:focus-visible .display-name{display:none}
+.crafted:focus-visible .hover-recipe{display:block}
+.station-section{margin:18px 0 25px}
+.station-heading{margin:0 0 12px;padding:0 2px 6px;border-bottom:1px solid #554a60;color:#ded0ec;font-size:15px;font-weight:750}
+@media(max-width:600px){.craft-grid{grid-template-columns:repeat(auto-fill,minmax(125px,1fr))}.crafted,.crafted.chosen{padding:9px;min-height:142px}}
+.keyword{cursor:help;text-decoration:underline dotted #bfae80;text-underline-offset:3px}
+.crafted .keyword{text-decoration:none}
+.keyword-popup{position:fixed;z-index:60;width:min(370px,calc(100vw - 20px));max-height:min(70vh,620px);overflow:auto;padding:15px;border:1px solid var(--gold);border-radius:13px;background:#292137;box-shadow:0 20px 55px #000b}
+.keyword-popup h3{margin:0 0 8px;font-size:17px;color:var(--gold)}
+.keyword-popup h4{margin:13px 0 6px;font-size:12px;color:#dec897;text-transform:uppercase;letter-spacing:.05em}
+.keyword-popup p{margin:3px 0;color:#d7ccde;font-size:12px}
+.popup-recipe{display:block;width:100%;margin:6px 0;padding:10px 11px;text-align:left;color:var(--text);border:1px solid #655574;border-radius:9px;background:#332940;cursor:pointer}
+.popup-recipe:hover{border-color:var(--gold);background:#42334e}
+.popup-recipe:focus-within{border-color:var(--gold);background:#42334e}
+.popup-recipe-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px}
+.popup-recipe b{display:block;color:#f2d898;font-size:12px}
+.popup-recipe button{padding:3px 7px;border:1px solid var(--gold);border-radius:6px;background:#493754;color:#f8dda2;font-size:11px;font-weight:750}
+.popup-recipe button:hover{background:#604467}
+.popup-recipe span{display:block;font-size:12px;line-height:1.4}
+.queue-ingredient{margin:6px 0 6px 12px;padding-left:9px;border-left:1px solid #665776}
+.queue-ingredient-row{display:flex;align-items:center;gap:6px;font-size:12px}
+.queue-ingredient-row .keyword{flex:1;min-width:0;overflow-wrap:anywhere}
+.queue-ingredient-row.green{color:var(--green)}
+.queue-ingredient-row.short{color:var(--red)}
+.queue-ingredient-row .need{white-space:nowrap;font-size:10px;color:var(--muted)}
+.queue-ingredient-row button{flex:none;width:22px;height:22px;padding:0;border:1px solid #766285;border-radius:5px;background:#403149;color:var(--text);font-weight:800}
+.queue-ingredient-row button:hover{background:#564064}
+.queue-branch{margin-left:7px}
+.queue-branch-label{font-size:10px;color:#d6bb7b;margin:4px 0}
+.queue-preview{margin:4px 0 4px 10px;color:var(--muted);font-size:10px}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -73,12 +122,12 @@
 </header>
 <div class="columns">
  <section class="panel" aria-labelledby="invTitle">
-  <div class="panel-head"><div class="eyebrow">01 — Record your supplies</div><div class="panel-title"><h2 id="invTitle">Player inventory</h2><span class="metric" id="inventoryStat"></span></div><div class="tabs" id="inventoryTabs"><button class="tab active" data-val="item">Items</button><button class="tab" data-val="monster">Monsters</button></div></div>
+  <div class="panel-head"><div class="eyebrow">01 — Record your supplies</div><div class="panel-title"><h2 id="invTitle">Player Inventory</h2><button class="info-button" id="infoButton" type="button" aria-label="How to use Monster Alchemy" title="How to use Monster Alchemy">i</button></div><div class="tabs" id="inventoryTabs"><button class="tab active" data-val="item">Items</button><button class="tab" data-val="monster">Monsters</button></div></div>
   <div class="controls"><input class="search" id="inventorySearch" placeholder="Find an item or monster…" aria-label="Search inventory"><div class="filters" id="inventoryTiers" hidden></div></div>
-  <div class="panel-body"><div class="hint">Click a quantity to select it. <span class="kbd">Enter</span> or <span class="kbd">Space</span> jumps to the next box. <span class="kbd">Shift</span> reverses. <span class="store-legend">🏪 = shop stock (town shown beneath its item).</span></div><div class="inventory-grid" id="inventoryGrid"></div><div class="toolbar-foot"><span>Only materials used in recipes appear here, alphabetized. Zero means not held.</span><span id="itemCount"></span></div></div>
+  <div class="panel-body"><div class="inventory-grid" id="inventoryGrid"></div><div class="toolbar-foot"><span>Only materials used in recipes appear here, alphabetized. Zero means not held.</span><span id="itemCount"></span></div></div>
  </section>
  <section class="panel" aria-labelledby="craftTitle">
-  <div class="panel-head"><div class="eyebrow">02 — Plan what you can make</div><div class="panel-title"><h2 id="craftTitle">Workshop</h2><span class="metric" id="workshopStat"></span></div><div class="tabs" id="craftTabs"><button class="tab active" data-val="monster">Creatures</button><button class="tab" data-val="item">Items</button><button class="tab" data-val="fusion">Fusions</button><button class="tab" data-val="gaps">Recipe gaps <span id="gapCount"></span></button></div></div>
+  <div class="panel-head"><div class="eyebrow">02 — Plan what you can make</div><div class="panel-title"><h2 id="craftTitle">Workshop</h2><span class="metric" id="workshopStat"></span></div><div class="tabs" id="craftTabs"><button class="tab active" data-val="monster">Creatures</button><button class="tab" data-val="item">Items</button><button class="tab" data-val="fusion">Fusions</button></div></div>
   <div class="controls" id="workshopControls"><input class="search" id="craftSearch" placeholder="Search recipes…" aria-label="Search recipes"><div class="filters" id="craftTiers"></div><div class="filters station-filters" id="craftStations" aria-label="Filter workshop by crafting station"></div></div>
   <div class="panel-body" id="craftBody"></div>
  </section>
@@ -87,9 +136,12 @@
 <section class="floating hidden" id="queuePopup" aria-label="Wanted crafting queue">
  <div class="queue-head"><div><b>✦ Wanted list <span id="queueTotal"></span></b><span id="queueBrief">Resources reserved — not yet spent</span></div><div class="queue-actions"><button class="tiny" id="minimize" title="Minimize or expand wanted list" aria-expanded="true">—</button></div></div>
  <div class="queue-scroll" id="queueScroll"></div>
- <div class="queue-foot"><div class="section-label">Bulk crafting checklist</div><div class="breakdown" id="queueBreakdown"></div><div class="queue-footer-actions"><button class="action" id="clearQueue">Clear queue / refund</button><button class="action" id="expandQueue" title="Show all planned steps">Expand list ↑</button></div></div>
+ <div class="queue-foot"><div class="breakdown" id="queueBreakdown"></div><div class="queue-footer-actions"><button class="action" id="clearQueue">Clear queue / refund</button><button class="action" id="expandQueue" title="Show all planned steps">Expand list ↑</button></div></div>
 </section>
-<div class="modal-shade hidden" id="modalShade" role="presentation"><form class="modal" id="recipeForm" aria-modal="true" role="dialog" aria-label="Add a crafting recipe"><h3>Add a recipe</h3><p>Fill in a missing recipe or add a new discovery. Custom recipes are saved on this browser.</p><div class="field"><label for="recipeName">Result name</label><input id="recipeName" required placeholder="e.g., Damp Dough"></div><div class="field"><label for="recipeKind">Creates</label><select id="recipeKind"><option value="item">Item</option><option value="monster">Monster</option></select></div><div class="field"><label for="recipeStation">Station</label><select id="recipeStation"><option>Cauldron</option><option>Furnace</option><option>Crusher</option><option>Fermentator</option><option>Summoning</option><option>Necromancy</option><option>Special Fusion</option><option>Other</option></select></div><div class="field" id="recipeTierRow" hidden><label for="recipeTier">Monster tier</label><select id="recipeTier"><option value="1">Tier 1</option><option value="2">Tier 2</option><option value="3">Tier 3</option></select></div><div class="field"><label for="recipeInputs">Ingredients (comma-separated)</label><textarea id="recipeInputs" required placeholder="2 Stone, 1 Ember Gel, 5 Bone"></textarea><div class="help">Enter each as “quantity name”. For monster ingredients, prefix the name with <b>monster:</b>, e.g. <b>1 monster:Slime</b>.</div></div><div class="modal-buttons"><button type="button" class="action" id="cancelRecipe">Cancel</button><button class="action primary" type="submit">Save recipe</button></div></form></div>
+<div class="keyword-popup" id="keywordPopup" hidden role="dialog" aria-label="Recipes and sources"></div>
+<div class="keyword-popup" id="keywordPopupNested" hidden role="dialog" aria-label="Linked recipes and sources"></div>
+<div class="modal-shade hidden" id="modalShade" role="presentation"><form class="modal" id="recipeForm" aria-modal="true" role="dialog" aria-label="Add a crafting recipe"><h3>Add a recipe</h3><p>Fill in a missing recipe or add a new discovery. Custom recipes are saved on this browser.</p><div class="field"><label for="recipeName">Result name</label><input id="recipeName" required placeholder="e.g., Damp Dough"></div><div class="field"><label for="recipeKind">Creates</label><select id="recipeKind"><option value="item">Item</option><option value="monster">Monster</option></select></div><div class="field"><label for="recipeStation">Station</label><select id="recipeStation"><option>Cauldron</option><option>Furnace</option><option>Crusher</option><option>Fermentator</option><option>Summoning</option><option>Necromancy</option><option>Fusion</option><option>Other</option></select></div><div class="field" id="recipeTierRow" hidden><label for="recipeTier">Monster tier</label><select id="recipeTier"><option value="1">Tier 1</option><option value="2">Tier 2</option><option value="3">Tier 3</option></select></div><div class="field"><label for="recipeInputs">Ingredients (comma-separated)</label><textarea id="recipeInputs" required placeholder="2 Stone, 1 Ember Gel, 5 Bone"></textarea><div class="help">Enter each as “quantity name”. For monster ingredients, prefix the name with <b>monster:</b>, e.g. <b>1 monster:Slime</b>.</div></div><div class="modal-buttons"><button type="button" class="action" id="cancelRecipe">Cancel</button><button class="action primary" type="submit">Save recipe</button></div></form></div>
+<div class="modal-shade hidden" id="infoShade" role="presentation"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="infoTitle"><h3 id="infoTitle">How to use Monster Alchemy</h3><p>Look for a recipe, or let our tool plan the monsters you want.</p><div class="modal-buttons"><button class="action primary" id="closeInfo" type="button">Got it</button></div></div></div>
 <div id="toast" class="hidden" role="status"></div>
 <script type="application/json" id="seedData">
 {
@@ -2565,36 +2617,31 @@
       "tier": 3,
       "ingredients": [
         {
-          "name": "Obsidian Shard",
-          "qty": 1,
+          "name": "Corpse",
+          "qty": 10,
           "kind": "item",
-          "implicit": true
+          "implicit": false
         },
         {
           "name": "Death Dust",
-          "qty": 1,
+          "qty": 3,
           "kind": "item",
-          "implicit": true
-        },
-        {
-          "name": "Corpse",
-          "qty": 1,
-          "kind": "item",
-          "implicit": true
+          "implicit": false
         },
         {
           "name": "Moon Crystal",
           "qty": 1,
           "kind": "item",
-          "implicit": true
+          "implicit": false
+        },
+        {
+          "name": "Obsidian Shard",
+          "qty": 5,
+          "kind": "item",
+          "implicit": false
         }
       ],
-      "warnings": [
-        "Quantity assumed to be 1 for Obsidian Shard",
-        "Quantity assumed to be 1 for Death Dust",
-        "Quantity assumed to be 1 for Corpse",
-        "Quantity assumed to be 1 for Moon Crystal"
-      ]
+      "warnings": []
     },
     {
       "id": "f94",
@@ -3008,7 +3055,7 @@
       "id": "f111",
       "name": "Goblin Gunner",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 1,
       "ingredients": [
         {
@@ -3030,7 +3077,7 @@
       "id": "f112",
       "name": "Green Slime",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 1,
       "ingredients": [
         {
@@ -3054,7 +3101,7 @@
       "id": "f113",
       "name": "Red Slime",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 1,
       "ingredients": [
         {
@@ -3078,7 +3125,7 @@
       "id": "f114",
       "name": "Blue Slime",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 1,
       "ingredients": [
         {
@@ -3102,7 +3149,7 @@
       "id": "f115",
       "name": "Bellotto",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 1,
       "ingredients": [
         {
@@ -3316,7 +3363,7 @@
       "id": "f124",
       "name": "Long Slime",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3338,7 +3385,7 @@
       "id": "f125",
       "name": "Wave Creeper",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3360,7 +3407,7 @@
       "id": "f126",
       "name": "Burny Fluff",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3382,7 +3429,7 @@
       "id": "f127",
       "name": "Merfolk Lancer",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3404,7 +3451,7 @@
       "id": "f128",
       "name": "Raging Gunner",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3426,7 +3473,7 @@
       "id": "f129",
       "name": "Wereshark",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3448,7 +3495,7 @@
       "id": "f130",
       "name": "Bandikko",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3470,7 +3517,7 @@
       "id": "f131",
       "name": "Chameledrake",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3492,7 +3539,7 @@
       "id": "f132",
       "name": "Diamond Head",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3514,7 +3561,7 @@
       "id": "f133",
       "name": "Flint Golem",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3534,9 +3581,9 @@
     },
     {
       "id": "f134",
-      "name": "Blue Jigou",
+      "name": "Lost Yeti",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3558,7 +3605,7 @@
       "id": "f135",
       "name": "Torch Demon",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3580,7 +3627,7 @@
       "id": "f136",
       "name": "Teddo",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3602,7 +3649,7 @@
       "id": "f137",
       "name": "Druidmmer",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3624,7 +3671,7 @@
       "id": "f138",
       "name": "Zombie Slime",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3646,7 +3693,7 @@
       "id": "f139",
       "name": "Tundra Ranger",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3668,7 +3715,7 @@
       "id": "f140",
       "name": "Floating Armor",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -3690,7 +3737,7 @@
       "id": "f141",
       "name": "Molten Daeva",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 3,
       "ingredients": [
         {
@@ -3712,7 +3759,7 @@
       "id": "f142",
       "name": "Great Dryad",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 3,
       "ingredients": [
         {
@@ -3732,13 +3779,13 @@
     },
     {
       "id": "f143",
-      "name": "Gigajigou",
+      "name": "Strong Yeti",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 3,
       "ingredients": [
         {
-          "name": "Blue Jigou",
+          "name": "Lost Yeti",
           "qty": 1,
           "kind": "monster",
           "implicit": true
@@ -3756,7 +3803,7 @@
       "id": "f144",
       "name": "Cursed Scale",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 3,
       "ingredients": [
         {
@@ -3778,7 +3825,7 @@
       "id": "f146",
       "name": "Flamtail",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 3,
       "ingredients": [
         {
@@ -3800,8 +3847,8 @@
       "id": "f147",
       "name": "Electrolicko",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
           "name": "Flicko",
@@ -3822,8 +3869,8 @@
       "id": "f148",
       "name": "Pantucho",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
           "name": "Small Tooth",
@@ -3844,8 +3891,8 @@
       "id": "f149",
       "name": "Brachesert",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
           "name": "Brachillo",
@@ -3866,8 +3913,8 @@
       "id": "f150",
       "name": "Storm Elemental",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
           "name": "Cute Abomination",
@@ -3888,8 +3935,8 @@
       "id": "f151",
       "name": "Borealus",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
           "name": "Corolus",
@@ -3910,8 +3957,8 @@
       "id": "f152",
       "name": "Drowned Bucaneer",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
           "name": "Buzzing Sniper",
@@ -3932,8 +3979,8 @@
       "id": "f153",
       "name": "Zombie Goblin",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
           "name": "Goblin Pillager",
@@ -3954,11 +4001,11 @@
       "id": "f154",
       "name": "White Dragonling",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
-          "name": "Blue Jigou",
+          "name": "Lost Yeti",
           "qty": 1,
           "kind": "monster",
           "implicit": true
@@ -3976,8 +4023,8 @@
       "id": "f155",
       "name": "Lunamoon",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
           "name": "Crowmere",
@@ -3998,8 +4045,8 @@
       "id": "f157",
       "name": "Draconid Commander",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
           "name": "Phoenix",
@@ -4020,8 +4067,8 @@
       "id": "f158",
       "name": "Floro",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
           "name": "Corolus",
@@ -4042,8 +4089,8 @@
       "id": "f159",
       "name": "Sunchi",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 2,
       "ingredients": [
         {
           "name": "Gnome",
@@ -4064,8 +4111,8 @@
       "id": "f160",
       "name": "Stormwing",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 3,
       "ingredients": [
         {
           "name": "Leggy",
@@ -4086,8 +4133,8 @@
       "id": "f161",
       "name": "Deathbloom",
       "kind": "monster",
-      "station": "Unclassified Fusion",
-      "tier": null,
+      "station": "Fusion",
+      "tier": 3,
       "ingredients": [
         {
           "name": "Demon Sprout",
@@ -5072,7 +5119,7 @@
       "id": "new-fusion-vampire",
       "name": "Vampire Adept",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 2,
       "ingredients": [
         {
@@ -5094,7 +5141,7 @@
       "id": "new-fusion-yellow-slime",
       "name": "Yellow Slime",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 1,
       "ingredients": [
         {
@@ -5116,7 +5163,7 @@
       "id": "new-fusion-hot-banshee",
       "name": "Hot Banshee",
       "kind": "monster",
-      "station": "Special Fusion",
+      "station": "Fusion",
       "tier": 1,
       "ingredients": [
         {
@@ -5161,7 +5208,6 @@
     "Black Wood": "From harder tree's in the north",
     "Muddy Petal": "Flower's in the middle of water and some monster drops",
     "Crystalium Ore": "Large spikey rocks to the east after the eye orb's",
-    "Moon Crystal": "It is the rarest item in the game. the only way to farm it as I know, go to the snow dudgeon in the last area. the boss at the bottom floor has a chance to drop one, tho it's epic drop. Might be a good idea to save scum a bit to get a few more for your needs.",
     "Corpse": "Gathered or obtained in the world; not craftable (location unspecified).",
     "Shadow Fragment": "Gathered or dropped; also sold in Zenilia.",
     "Ashes": "Material icon extracted from the game; acquisition method not yet documented.",
@@ -5176,7 +5222,7 @@
     "Specific monster fusions use recorded monster quantities. Generic elemental/type fusions are shown as Type needed until a specific monster matching that type can be selected.",
     "Craft yields are assumed to be one unit. Other recipes without in-game screenshots still have quantities from the original supplied notes; quantities not specified there default to one.",
     "Plibu: T1 Summoning, 1 Feral Bait + 1 Fantasy Calx (confirmed). Dark Wood was a mistaken name for Black Wood. Known shop locations are marked with a shop badge in the inventory and recipes.",
-    "All resource textures and 24×24 monster portraits from the Art.zip archive imported. Unclassified monster portraits are in the Other inventory filter; no missing recipe or tier is guessed from an image.",
+    "All resource textures and 24×24 monster portraits from the Art.zip archive imported. Previously unclassified inventory monsters are provisionally grouped in Tier 3; missing recipes are not inferred from images.",
     "Congealed Blood is an alternate spelling of Coagulated Blood. Coagulated Blood drops from Saka and has no crafting formula.",
     "Polar Dust is normalized to Polar Powder. Toxic Bubble and Occular Bubble refer to Ocular Bubble.",
     "Hollow Berry, Zana, Liconut, and Rurian can be bought in Baquen.",
@@ -5229,9 +5275,4054 @@
   ]
 }
 </script>
+<script type="application/json" id="gameData">
+{
+  "fusionVariants": [
+    {
+      "id": "game-fusion-Slime+1FireAny",
+      "result": "Red Slime",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Slime",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Fire T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Slime+1WaterAny",
+      "result": "Blue Slime",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Slime",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Water T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Slime+1NatureAny",
+      "result": "Green Slime",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Slime",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Grass T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Slime+1EnergyAny",
+      "result": "Yellow Slime",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Slime",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Electric T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-StickGolem+Lavapod",
+      "result": "Flint Golem",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Stick Golem",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Lavapod",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-TwitchyFluff+RedSlime",
+      "result": "Burny Fluff",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Twitchy Fluff",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Red Slime",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-BoneCrawler+Brachillo",
+      "result": "Wave Creeper",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Bone Crawler",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Brachillo",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Imp+DemonSprout",
+      "result": "Torch Demon",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Imp",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Demon Sprout",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-ForestSprite+CaveTroll",
+      "result": "Druidmmer",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Forest Sprite",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Cave Troll",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Wintlet+Teddo",
+      "result": "Lost Yeti",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Wintlet",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Teddo",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Scout+GoblinPillager",
+      "result": "Goblin Gunner",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Scout",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Goblin Pillager",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-GoblinGunner+Ignibos",
+      "result": "Raging Gunner",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Goblin Gunner",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Ignibos",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-SmallTooth+Flicko",
+      "result": "Wereshark",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Small Tooth",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Flicko",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Merkid+GoblinFisher",
+      "result": "Merfolk Lancer",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Merkid",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Goblin Harpooner",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Banshee+1FireAny",
+      "result": "Hot Banshee",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Banshee",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Fire T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Slime+Noodle",
+      "result": "Long Slime",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Slime",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Noodle",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-FloatingHelmet+GleSha",
+      "result": "Floating Armor",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Floating Helmet",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Gle Sha",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Banshee+SmallTooth",
+      "result": "Pantucho",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Banshee",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Small Tooth",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Zombie+GoblinPillager",
+      "result": "Zombie Goblin",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Zombie",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Goblin Pillager",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Zombie+Slime",
+      "result": "Zombie Slime",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Zombie",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Slime",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Plibu+Ork",
+      "result": "Teddo",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Plibu",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Ork",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Vampirekid+saka",
+      "result": "Vampire Adept",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Vampire Kid",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Saka",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-SaltySailor+BuzzingSniper",
+      "result": "Drowned Bucaneer",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Salty Sailor",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Buzzing Sniper",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Corolus+CloudDrake",
+      "result": "Borealus",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Corolus",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Cloud Drake",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Scout+PenguinWarrior",
+      "result": "Tundra Ranger",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Scout",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Penguin Warrior",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Brachillo+Fortifisand",
+      "result": "Brachesert",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Brachillo",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Fortifisand",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Gekklar+Clawless",
+      "result": "Bandikko",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Gekklar",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Clawless",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Flicko+Electrofly",
+      "result": "Electrolicko",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Flicko",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Electrofly",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-SteelHead+Skullhead",
+      "result": "Diamond Head",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Steel Head",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Skullhead",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Solsun+Crowmere",
+      "result": "Lunamoon",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Solsun",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Crowmere",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-TorchDemon+Dozz",
+      "result": "Molten Demon",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Torch Demon",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Dozz",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-HammerDruid+Eplepe",
+      "result": "Great Dryad",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Druidmmer",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Eplepe",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-LostYeti+RighteousHand",
+      "result": "Strong Yeti",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Lost Yeti",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Righteous Hand",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Dragonling+LostYeti",
+      "result": "White Dragonling",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Dragonling",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Lost Yeti",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-CloudElemental+CuteAbomination",
+      "result": "Storm Elemental",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Cloud Elemental",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Cute Abomination",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Sharptail+TorchDemon",
+      "result": "Flamtail",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Sharptail",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Torch Demon",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-ScaleDisciple+Dozz",
+      "result": "Cursed Scale",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Scale Disciple",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Dozz",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-ScaleDisciple+Phoenix",
+      "result": "Draconid Commander",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Scale Disciple",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Phoenix",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-AnchoredSoul+Corolus",
+      "result": "Floro",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Anchored Soul",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Corolus",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-AnchoredSoul+Gnome",
+      "result": "Sunchi",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Anchored Soul",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Gnome",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-Phoenix+Leggy",
+      "result": "Stormwing",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Phoenix",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Leggy",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-DemonSprout+CursedScale",
+      "result": "Deathbloom",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Demon Sprout",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Cursed Scale",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-DraconidCommander+FloatingArmor",
+      "result": "Infernal Blade",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Draconid Commander",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Floating Armor",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-FloatingArmor+Crowmere",
+      "result": "Twilight Armor",
+      "inputs": [
+        {
+          "kind": "monster",
+          "name": "Floating Armor",
+          "qty": 1
+        },
+        {
+          "kind": "monster",
+          "name": "Crowmere",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireAny+1WaterAny",
+      "result": "Naster",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Fire T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Water T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireAny+1NatureAny",
+      "result": "Lavapod",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Fire T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Grass T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterAny+1NatureAny",
+      "result": "Mosshat",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Water T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Grass T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireStrike+1FireStrike",
+      "result": "Illuminator",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireSlash+1FireSlash",
+      "result": "Dragonling",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireProjectile+1FireProjectile",
+      "result": "Scorched Juggler",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireStrike+1FireSlash",
+      "result": "Dragonling",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireProjectile+1FireStrike",
+      "result": "Illuminator",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireSlash+1FireProjectile",
+      "result": "Scorched Juggler",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireStrike+1NeutralStrike",
+      "result": "Illuminator",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireStrike+1NeutralSlash",
+      "result": "Dragonling",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireStrike+1NeutralProjectile",
+      "result": "Scorched Juggler",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireSlash+1NeutralStrike",
+      "result": "Illuminator",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireSlash+1NeutralSlash",
+      "result": "Dragonling",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireSlash+1NeutralProjectile",
+      "result": "Scorched Juggler",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireProjectile+1NeutralStrike",
+      "result": "Illuminator",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireProjectile+1NeutralSlash",
+      "result": "Dragonling",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1FireProjectile+1NeutralProjectile",
+      "result": "Scorched Juggler",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterStrike+1WaterStrike",
+      "result": "Stompal",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterSlash+1WaterSlash",
+      "result": "Penguin Warrior",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterProjectile+1WaterProjectile",
+      "result": "Bruxis",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterStrike+1WaterSlash",
+      "result": "Penguin Warrior",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterStrike+1WaterProjectile",
+      "result": "Bruxis",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterSlash+1WaterProjectile",
+      "result": "Penguin Warrior",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterStrike+1NeutralStrike",
+      "result": "Stompal",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterStrike+1NeutralSlash",
+      "result": "Penguin Warrior",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterStrike+1NeutralProjectile",
+      "result": "Bruxis",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterSlash+1NeutralStrike",
+      "result": "Stompal",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterSlash+1NeutralSlash",
+      "result": "Penguin Warrior",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterSlash+1NeutralProjectile",
+      "result": "Bruxis",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterProjectile+1NeutralStrike",
+      "result": "Stompal",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterProjectile+1NeutralSlash",
+      "result": "Penguin Warrior",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1WaterProjectile+1NeutralProjectile",
+      "result": "Bruxis",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureStrike+1NatureStrike",
+      "result": "Corolus",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureSlash+1NatureSlash",
+      "result": "Gekklar",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureProjectile+1NatureProjectile",
+      "result": "Bellotto",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureStrike+1NatureSlash",
+      "result": "Corolus",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureStrike+1NatureProjectile",
+      "result": "Corolus",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureSlash+1NatureProjectile",
+      "result": "Gekklar",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureStrike+1NeutralStrike",
+      "result": "Corolus",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureStrike+1NeutralSlash",
+      "result": "Gekklar",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureStrike+1NeutralProjectile",
+      "result": "Bellotto",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureSlash+1NeutralStrike",
+      "result": "Corolus",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureSlash+1NeutralSlash",
+      "result": "Gekklar",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureSlash+1NeutralProjectile",
+      "result": "Bellotto",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureProjectile+1NeutralStrike",
+      "result": "Corolus",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureProjectile+1NeutralSlash",
+      "result": "Gekklar",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NatureProjectile+1NeutralProjectile",
+      "result": "Bellotto",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NeutralStrike+1NeutralStrike",
+      "result": "Steel Head",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NeutralSlash+1NeutralSlash",
+      "result": "Floating Helmet",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NeutralProjectile+1NeutralProjectile",
+      "result": "Twitchy Fluff",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NeutralStrike+1NeutralSlash",
+      "result": "Floating Helmet",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NeutralProjectile+1NeutralStrike",
+      "result": "Steel Head",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-1NeutralSlash+1NeutralProjectile",
+      "result": "Twitchy Fluff",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T1",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T1",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireAny+2WaterAny",
+      "result": "Cloud Elemental",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Fire T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Water T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireAny+2NatureAny",
+      "result": "Piedredge",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Fire T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Grass T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterAny+2NatureAny",
+      "result": "Moss Golem",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Water T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Grass T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireStrike+2FireStrike",
+      "result": "Clawless",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireSlash+2FireSlash",
+      "result": "Snapjaw",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireProjectile+2FireProjectile",
+      "result": "Chameledrake",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireStrike+2FireSlash",
+      "result": "Snapjaw",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireStrike+2FireProjectile",
+      "result": "Clawless",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireSlash+2FireProjectile",
+      "result": "Chameledrake",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireStrike+2NeutralStrike",
+      "result": "Clawless",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireStrike+2NeutralSlash",
+      "result": "Snapjaw",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireStrike+2NeutralProjectile",
+      "result": "Chameledrake",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireSlash+2NeutralStrike",
+      "result": "Clawless",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireSlash+2NeutralSlash",
+      "result": "Snapjaw",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireSlash+2NeutralProjectile",
+      "result": "Chameledrake",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireProjectile+2NeutralStrike",
+      "result": "Clawless",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireProjectile+2NeutralSlash",
+      "result": "Snapjaw",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2FireProjectile+2NeutralProjectile",
+      "result": "Chameledrake",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterStrike+2WaterStrike",
+      "result": "Mamclops",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterSlash+2WaterSlash",
+      "result": "Merfolk Lancer",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterProjectile+2WaterProjectile",
+      "result": "Bubblex",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterStrike+2WaterSlash",
+      "result": "Merfolk Lancer",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterStrike+2WaterProjectile",
+      "result": "Mamclops",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterSlash+2WaterProjectile",
+      "result": "Merfolk Lancer",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterStrike+2NeutralStrike",
+      "result": "Mamclops",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterStrike+2NeutralSlash",
+      "result": "Merfolk Lancer",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterStrike+2NeutralProjectile",
+      "result": "Bubblex",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterSlash+2NeutralStrike",
+      "result": "Mamclops",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterSlash+2NeutralSlash",
+      "result": "Merfolk Lancer",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterSlash+2NeutralProjectile",
+      "result": "Bubblex",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterProjectile+2NeutralStrike",
+      "result": "Mamclops",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterProjectile+2NeutralSlash",
+      "result": "Merfolk Lancer",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2WaterProjectile+2NeutralProjectile",
+      "result": "Bubblex",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureStrike+2NatureStrike",
+      "result": "Petomp",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureSlash+2NatureSlash",
+      "result": "Sharptail",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureProjectile+2NatureProjectile",
+      "result": "Buzzing Sniper",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureStrike+2NatureSlash",
+      "result": "Sharptail",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureStrike+2NatureProjectile",
+      "result": "Buzzing Sniper",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureSlash+2NatureProjectile",
+      "result": "Buzzing Sniper",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureStrike+2NeutralStrike",
+      "result": "Petomp",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureStrike+2NeutralSlash",
+      "result": "Sharptail",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureStrike+2NeutralProjectile",
+      "result": "Buzzing Sniper",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureSlash+2NeutralStrike",
+      "result": "Petomp",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureSlash+2NeutralSlash",
+      "result": "Sharptail",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureSlash+2NeutralProjectile",
+      "result": "Buzzing Sniper",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureProjectile+2NeutralStrike",
+      "result": "Petomp",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureProjectile+2NeutralSlash",
+      "result": "Sharptail",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NatureProjectile+2NeutralProjectile",
+      "result": "Buzzing Sniper",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NeutralStrike+2NeutralStrike",
+      "result": "Skullhead",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NeutralSlash+2NeutralSlash",
+      "result": "Gorritero",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NeutralProjectile+2NeutralProjectile",
+      "result": "Knife Thrower",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NeutralStrike+2NeutralSlash",
+      "result": "Gorritero",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NeutralProjectile+2NeutralStrike",
+      "result": "Skullhead",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Hammer T2",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "id": "game-fusion-2NeutralSlash+2NeutralProjectile",
+      "result": "Knife Thrower",
+      "inputs": [
+        {
+          "kind": "type",
+          "name": "Sword T2",
+          "qty": 1
+        },
+        {
+          "kind": "type",
+          "name": "Arrow T2",
+          "qty": 1
+        }
+      ]
+    }
+  ],
+  "itemSources": {
+    "Goo": [
+      {
+        "monster": "Blue Slime",
+        "rarity": "common"
+      },
+      {
+        "monster": "Green Slime",
+        "rarity": "common"
+      },
+      {
+        "monster": "Long Slime",
+        "rarity": "common"
+      },
+      {
+        "monster": "Ornenza",
+        "rarity": "common"
+      },
+      {
+        "monster": "Red Slime",
+        "rarity": "common"
+      },
+      {
+        "monster": "Slime",
+        "rarity": "common"
+      },
+      {
+        "monster": "Yellow Slime",
+        "rarity": "common"
+      },
+      {
+        "monster": "Zombie Slime",
+        "rarity": "common"
+      }
+    ],
+    "Stone": [
+      {
+        "monster": "Flint Golem",
+        "rarity": "common"
+      },
+      {
+        "monster": "Fortifisand",
+        "rarity": "common"
+      },
+      {
+        "monster": "Gle Sha",
+        "rarity": "common"
+      },
+      {
+        "monster": "Moss Golem",
+        "rarity": "common"
+      },
+      {
+        "monster": "Righteous Hand",
+        "rarity": "common"
+      },
+      {
+        "monster": "Steel Head",
+        "rarity": "common"
+      },
+      {
+        "monster": "Stick Golem",
+        "rarity": "common"
+      }
+    ],
+    "Oranite": [
+      {
+        "monster": "Draconid Commander",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Karma Hand",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Righteous Hand",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Rune Guardian",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Scale Disciple",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Stick Golem",
+        "rarity": "epic"
+      }
+    ],
+    "Scraggy Meat": [
+      {
+        "monster": "Bandikko",
+        "rarity": "common"
+      },
+      {
+        "monster": "Cave Troll",
+        "rarity": "common"
+      },
+      {
+        "monster": "Chameledrake",
+        "rarity": "common"
+      },
+      {
+        "monster": "Gekklar",
+        "rarity": "common"
+      },
+      {
+        "monster": "Goblin Gunner",
+        "rarity": "common"
+      },
+      {
+        "monster": "Goblin Harpooner",
+        "rarity": "common"
+      },
+      {
+        "monster": "Goblin Hexer",
+        "rarity": "common"
+      },
+      {
+        "monster": "Goblin Pillager",
+        "rarity": "common"
+      },
+      {
+        "monster": "Knife Thrower",
+        "rarity": "common"
+      },
+      {
+        "monster": "Ork",
+        "rarity": "common"
+      },
+      {
+        "monster": "Raging Gunner",
+        "rarity": "common"
+      },
+      {
+        "monster": "Scout",
+        "rarity": "common"
+      },
+      {
+        "monster": "Small Tooth",
+        "rarity": "common"
+      },
+      {
+        "monster": "Stinky Monkey",
+        "rarity": "common"
+      },
+      {
+        "monster": "Stompal",
+        "rarity": "common"
+      },
+      {
+        "monster": "Twitchy Fluff",
+        "rarity": "common"
+      },
+      {
+        "monster": "Wiwo",
+        "rarity": "common"
+      },
+      {
+        "monster": "Zzoink",
+        "rarity": "common"
+      }
+    ],
+    "Bone": [
+      {
+        "monster": "Bone Crawler",
+        "rarity": "common"
+      },
+      {
+        "monster": "Goblin Hexer",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Molo",
+        "rarity": "common"
+      },
+      {
+        "monster": "Pantucho",
+        "rarity": "common"
+      },
+      {
+        "monster": "Skeleton Archer",
+        "rarity": "common"
+      },
+      {
+        "monster": "Skeleton Servant",
+        "rarity": "common"
+      },
+      {
+        "monster": "Skunicorn",
+        "rarity": "common"
+      },
+      {
+        "monster": "Slimbones",
+        "rarity": "common"
+      },
+      {
+        "monster": "Trumpet Skeleton",
+        "rarity": "common"
+      },
+      {
+        "monster": "Vertebral Corsair",
+        "rarity": "common"
+      },
+      {
+        "monster": "Wave Creeper",
+        "rarity": "common"
+      }
+    ],
+    "Shiny Feather": [
+      {
+        "monster": "Gorritero",
+        "rarity": "common"
+      },
+      {
+        "monster": "Leggy",
+        "rarity": "common"
+      },
+      {
+        "monster": "Ornenza",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Penguin Warrior",
+        "rarity": "common"
+      },
+      {
+        "monster": "Phenchi",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Phoenix",
+        "rarity": "common"
+      },
+      {
+        "monster": "Razorbeak Crow",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Scout",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Stormwing",
+        "rarity": "common"
+      },
+      {
+        "monster": "Tundra Ranger",
+        "rarity": "rare"
+      }
+    ],
+    "Hydro Gland": [
+      {
+        "monster": "Brachesert",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Brachillo",
+        "rarity": "common"
+      },
+      {
+        "monster": "Cloud Drake",
+        "rarity": "common"
+      },
+      {
+        "monster": "Electrolicko",
+        "rarity": "common"
+      },
+      {
+        "monster": "Flicko",
+        "rarity": "common"
+      },
+      {
+        "monster": "Goblin Harpooner",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Merfolk Lancer",
+        "rarity": "common"
+      },
+      {
+        "monster": "Merkid",
+        "rarity": "common"
+      },
+      {
+        "monster": "Merkid",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Mosshat",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Slimbones",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Stompal",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Trianha",
+        "rarity": "common"
+      },
+      {
+        "monster": "Wereshark",
+        "rarity": "common"
+      }
+    ],
+    "Condensed Spores": [
+      {
+        "monster": "Infected Juggler",
+        "rarity": "common"
+      },
+      {
+        "monster": "Mushroom Toad",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Rotspore Brute",
+        "rarity": "common"
+      }
+    ],
+    "Gastric Sac": [
+      {
+        "monster": "Amalgameye",
+        "rarity": "common"
+      },
+      {
+        "monster": "Mushroom Toad",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Pott",
+        "rarity": "common"
+      },
+      {
+        "monster": "Rotspore Brute",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Rust Eater",
+        "rarity": "common"
+      }
+    ],
+    "Flame Tendon": [
+      {
+        "monster": "Burny Fluff",
+        "rarity": "common"
+      },
+      {
+        "monster": "Chameledrake",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Dragonling",
+        "rarity": "common"
+      },
+      {
+        "monster": "Flamtail",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Ignibos",
+        "rarity": "common"
+      },
+      {
+        "monster": "Imp",
+        "rarity": "common"
+      },
+      {
+        "monster": "Molten Demon",
+        "rarity": "common"
+      },
+      {
+        "monster": "Phenchi",
+        "rarity": "common"
+      },
+      {
+        "monster": "Scorched Juggler",
+        "rarity": "common"
+      },
+      {
+        "monster": "Torch Demon",
+        "rarity": "common"
+      }
+    ],
+    "Zana": [
+      {
+        "monster": "Corolus",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Mysterious Sylvan",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Noodle",
+        "rarity": "epic"
+      }
+    ],
+    "Ember Gel": [
+      {
+        "monster": "Burny Fluff",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Candela",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Illuminator",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Lavapod",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Red Slime",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Snapjaw",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Solsun",
+        "rarity": "common"
+      }
+    ],
+    "Fungal Extract": [
+      {
+        "monster": "Green Slime",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Rotspore Brute",
+        "rarity": "epic"
+      }
+    ],
+    "Marine Essence": [
+      {
+        "monster": "Anchored Soul",
+        "rarity": "common"
+      },
+      {
+        "monster": "Blue Slime",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Drowned Bucaneer",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Salty Sailor",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Vertebral Corsair",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Wave Creeper",
+        "rarity": "epic"
+      }
+    ],
+    "Prismatic Tonic": [
+      {
+        "monster": "Storm Elemental",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Stormwing",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Trumpet Skeleton",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Yellow Slime",
+        "rarity": "epic"
+      }
+    ],
+    "Rough Fur": [
+      {
+        "monster": "Burny Fluff",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Clawless",
+        "rarity": "common"
+      },
+      {
+        "monster": "Cute Abomination",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Flamtail",
+        "rarity": "common"
+      },
+      {
+        "monster": "Ignibos",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Lost Yeti",
+        "rarity": "common"
+      },
+      {
+        "monster": "Mamclops",
+        "rarity": "common"
+      },
+      {
+        "monster": "Ork",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Plibu",
+        "rarity": "common"
+      },
+      {
+        "monster": "Sharptail",
+        "rarity": "common"
+      },
+      {
+        "monster": "Small Tooth",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Spike Guy",
+        "rarity": "common"
+      },
+      {
+        "monster": "Strong Yeti",
+        "rarity": "common"
+      },
+      {
+        "monster": "Teddo",
+        "rarity": "common"
+      },
+      {
+        "monster": "Twitchy Fluff",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Wintlet",
+        "rarity": "common"
+      },
+      {
+        "monster": "Wiwo",
+        "rarity": "rare"
+      }
+    ],
+    "Dung": [
+      {
+        "monster": "Electrofly",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Stinky Monkey",
+        "rarity": "epic"
+      }
+    ],
+    "Coin": [
+      {
+        "monster": "Gnome",
+        "rarity": "common"
+      }
+    ],
+    "Sylvan Infusion": [
+      {
+        "monster": "Gnome",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Plibey",
+        "rarity": "epic"
+      }
+    ],
+    "Magma Shard": [
+      {
+        "monster": "Flint Golem",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Infernal Blade",
+        "rarity": "common"
+      },
+      {
+        "monster": "Lavapod",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Molten Demon",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Piedredge",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Torch Demon",
+        "rarity": "rare"
+      }
+    ],
+    "Wood": [
+      {
+        "monster": "Bellotto",
+        "rarity": "common"
+      }
+    ],
+    "Rurian": [
+      {
+        "monster": "Bellotto",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Mysterious Sylvan",
+        "rarity": "epic"
+      }
+    ],
+    "Reactive Dust": [
+      {
+        "monster": "Goblin Gunner",
+        "rarity": "epic"
+      }
+    ],
+    "Frost Veins": [
+      {
+        "monster": "Borealus",
+        "rarity": "common"
+      },
+      {
+        "monster": "Cave Troll",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Cryoadorer",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Lost Yeti",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Mamclops",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Penguin Warrior",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Strong Yeti",
+        "rarity": "rare"
+      },
+      {
+        "monster": "White Dragonling",
+        "rarity": "common"
+      },
+      {
+        "monster": "Wintlet",
+        "rarity": "rare"
+      }
+    ],
+    "Iron Ingot": [
+      {
+        "monster": "Cog Knight",
+        "rarity": "common"
+      },
+      {
+        "monster": "Ferrous Knuckle",
+        "rarity": "common"
+      },
+      {
+        "monster": "Floating Armor",
+        "rarity": "common"
+      },
+      {
+        "monster": "Floating Helmet",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Mechanical Angel",
+        "rarity": "common"
+      },
+      {
+        "monster": "Mechanical Cherub",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Rusty Knight",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Twilight Armor",
+        "rarity": "common"
+      }
+    ],
+    "Flesh Melting Acid": [
+      {
+        "monster": "Pott",
+        "rarity": "epic"
+      }
+    ],
+    "Ocular Bubble": [
+      {
+        "monster": "Amalgameye",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Bubblex",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Eplepe",
+        "rarity": "common"
+      },
+      {
+        "monster": "Naster",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Righteous Hand",
+        "rarity": "rare"
+      }
+    ],
+    "Crystalium Ore": [
+      {
+        "monster": "Chameledrake",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Winged Spirit",
+        "rarity": "rare"
+      }
+    ],
+    "Iron Ore": [
+      {
+        "monster": "Steel Head",
+        "rarity": "rare"
+      }
+    ],
+    "Coagulated Blood": [
+      {
+        "monster": "Buzzing Sniper",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Saka",
+        "rarity": "common"
+      },
+      {
+        "monster": "Snapjaw",
+        "rarity": "common"
+      },
+      {
+        "monster": "Stottro",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Vampire Adept",
+        "rarity": "common"
+      },
+      {
+        "monster": "Vampire Kid",
+        "rarity": "rare"
+      }
+    ],
+    "Ectoplasm": [
+      {
+        "monster": "Banshee",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Bruxis",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Druidmmer",
+        "rarity": "common"
+      },
+      {
+        "monster": "Forest Sprite",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Great Dryad",
+        "rarity": "common"
+      },
+      {
+        "monster": "Hot Banshee",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Living Tome",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Pantucho",
+        "rarity": "rare"
+      }
+    ],
+    "Muddy Petal": [
+      {
+        "monster": "Deathbloom",
+        "rarity": "common"
+      },
+      {
+        "monster": "Demon Sprout",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Druidmmer",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Forest Sprite",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Great Dryad",
+        "rarity": "rare"
+      }
+    ],
+    "Rotten Meat": [
+      {
+        "monster": "Corpse Crop",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Cryoadorer",
+        "rarity": "common"
+      },
+      {
+        "monster": "Cute Abomination",
+        "rarity": "common"
+      },
+      {
+        "monster": "Drowned Bucaneer",
+        "rarity": "common"
+      },
+      {
+        "monster": "Infected Juggler",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Ronin Zombie",
+        "rarity": "common"
+      },
+      {
+        "monster": "Salty Sailor",
+        "rarity": "common"
+      },
+      {
+        "monster": "Scorched Juggler",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Skullhead",
+        "rarity": "common"
+      },
+      {
+        "monster": "Vampire Kid",
+        "rarity": "common"
+      },
+      {
+        "monster": "Zombie",
+        "rarity": "common"
+      },
+      {
+        "monster": "Zombie Goblin",
+        "rarity": "common"
+      },
+      {
+        "monster": "Zombie Slime",
+        "rarity": "rare"
+      }
+    ],
+    "Shadow Fragment": [
+      {
+        "monster": "Baby Shadow",
+        "rarity": "common"
+      },
+      {
+        "monster": "Disturbing Silhouette",
+        "rarity": "rare"
+      }
+    ],
+    "Osseous Plaster": [
+      {
+        "monster": "Molo",
+        "rarity": "epic"
+      }
+    ],
+    "Black Wood": [
+      {
+        "monster": "Barkling",
+        "rarity": "common"
+      },
+      {
+        "monster": "Vengeful Doll",
+        "rarity": "common"
+      }
+    ],
+    "Hollow Berry": [
+      {
+        "monster": "Barkling",
+        "rarity": "epic"
+      }
+    ],
+    "Incense": [
+      {
+        "monster": "Vengeful Doll",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Zzoink",
+        "rarity": "epic"
+      }
+    ],
+    "Gooey Concentrate": [
+      {
+        "monster": "Long Slime",
+        "rarity": "epic"
+      }
+    ],
+    "Resentment Serum": [
+      {
+        "monster": "Raging Gunner",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Stottro",
+        "rarity": "epic"
+      }
+    ],
+    "Ferrous Tincture": [
+      {
+        "monster": "Floating Armor",
+        "rarity": "epic"
+      }
+    ],
+    "Liconut": [
+      {
+        "monster": "Plibey",
+        "rarity": "rare"
+      }
+    ],
+    "Magic Sand": [
+      {
+        "monster": "Fortifisand",
+        "rarity": "epic"
+      }
+    ],
+    "Solidified Cloud": [
+      {
+        "monster": "Cloud Elemental",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Storm Elemental",
+        "rarity": "rare"
+      }
+    ],
+    "Springtime Humus": [
+      {
+        "monster": "Floro",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Moss Golem",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Petomp",
+        "rarity": "epic"
+      }
+    ],
+    "Obsidian Shard": [
+      {
+        "monster": "Piedredge",
+        "rarity": "epic"
+      }
+    ],
+    "Crystal Ingot": [
+      {
+        "monster": "Diamond Head",
+        "rarity": "rare"
+      }
+    ],
+    "Moon Crystal": [
+      {
+        "monster": "Crowmere",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Dozz",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Eplepe",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Lunamoon",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Twilight Armor",
+        "rarity": "epic"
+      }
+    ],
+    "Cursed Skull": [
+      {
+        "monster": "Skullhead",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Skunicorn",
+        "rarity": "epic"
+      }
+    ],
+    "Death Dust": [
+      {
+        "monster": "Cursed Scale",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Deathbloom",
+        "rarity": "epic"
+      },
+      {
+        "monster": "Vertebral Corsair",
+        "rarity": "epic"
+      }
+    ],
+    "Fantasy Calx": [
+      {
+        "monster": "Phoenix",
+        "rarity": "rare"
+      },
+      {
+        "monster": "Sunchi",
+        "rarity": "epic"
+      }
+    ],
+    "Protein Concentrate": [
+      {
+        "monster": "Eplepe",
+        "rarity": "rare"
+      }
+    ]
+  },
+  "monsterRewards": {
+    "Slime": {
+      "common": "Goo"
+    },
+    "Stick Golem": {
+      "common": "Stone",
+      "epic": "Oranite"
+    },
+    "Goblin Pillager": {
+      "common": "Scraggy Meat"
+    },
+    "Goblin Hexer": {
+      "common": "Scraggy Meat",
+      "rare": "Bone"
+    },
+    "Scout": {
+      "common": "Scraggy Meat",
+      "epic": "Shiny Feather"
+    },
+    "Merkid": {
+      "common": "Hydro Gland",
+      "rare": "Hydro Gland"
+    },
+    "Mushroom Toad": {
+      "rare": "Condensed Spores",
+      "epic": "Gastric Sac"
+    },
+    "Imp": {
+      "common": "Flame Tendon"
+    },
+    "Bone Crawler": {
+      "common": "Bone"
+    },
+    "Goblin Harpooner": {
+      "common": "Scraggy Meat",
+      "rare": "Hydro Gland"
+    },
+    "Brachillo": {
+      "common": "Hydro Gland"
+    },
+    "Noodle": {
+      "epic": "Zana"
+    },
+    "Solsun": {
+      "common": "Ember Gel"
+    },
+    "Red Slime": {
+      "common": "Goo",
+      "epic": "Ember Gel"
+    },
+    "Green Slime": {
+      "common": "Goo",
+      "epic": "Fungal Extract"
+    },
+    "Blue Slime": {
+      "common": "Goo",
+      "epic": "Marine Essence"
+    },
+    "Yellow Slime": {
+      "common": "Goo",
+      "epic": "Prismatic Tonic"
+    },
+    "Wiwo": {
+      "common": "Scraggy Meat",
+      "rare": "Rough Fur"
+    },
+    "Twitchy Fluff": {
+      "common": "Scraggy Meat",
+      "rare": "Rough Fur"
+    },
+    "Small Tooth": {
+      "common": "Scraggy Meat",
+      "rare": "Rough Fur"
+    },
+    "Razorbeak Crow": {
+      "rare": "Shiny Feather"
+    },
+    "Stompal": {
+      "common": "Scraggy Meat",
+      "rare": "Hydro Gland"
+    },
+    "Stinky Monkey": {
+      "common": "Scraggy Meat",
+      "epic": "Dung"
+    },
+    "Gnome": {
+      "common": "Coin",
+      "epic": "Sylvan Infusion"
+    },
+    "Dragonling": {
+      "common": "Flame Tendon"
+    },
+    "Flint Golem": {
+      "common": "Stone",
+      "epic": "Magma Shard"
+    },
+    "Bellotto": {
+      "common": "Wood",
+      "epic": "Rurian"
+    },
+    "Mysterious Sylvan": {
+      "rare": "Zana",
+      "epic": "Rurian"
+    },
+    "Ork": {
+      "common": "Scraggy Meat",
+      "rare": "Rough Fur"
+    },
+    "Goblin Gunner": {
+      "common": "Scraggy Meat",
+      "epic": "Reactive Dust"
+    },
+    "Penguin Warrior": {
+      "common": "Shiny Feather",
+      "rare": "Frost Veins"
+    },
+    "Floating Helmet": {
+      "rare": "Iron Ingot"
+    },
+    "Mosshat": {
+      "rare": "Hydro Gland"
+    },
+    "Gekklar": {
+      "common": "Scraggy Meat"
+    },
+    "Pott": {
+      "common": "Gastric Sac",
+      "epic": "Flesh Melting Acid"
+    },
+    "Spike Guy": {
+      "common": "Rough Fur"
+    },
+    "Rust Eater": {
+      "common": "Gastric Sac"
+    },
+    "Ignibos": {
+      "common": "Flame Tendon",
+      "rare": "Rough Fur"
+    },
+    "Lavapod": {
+      "rare": "Ember Gel",
+      "epic": "Magma Shard"
+    },
+    "Burny Fluff": {
+      "common": "Flame Tendon",
+      "rare": "Rough Fur",
+      "epic": "Ember Gel"
+    },
+    "Amalgameye": {
+      "common": "Gastric Sac",
+      "rare": "Ocular Bubble"
+    },
+    "Naster": {
+      "rare": "Ocular Bubble"
+    },
+    "Plibu": {
+      "common": "Rough Fur"
+    },
+    "Flicko": {
+      "common": "Hydro Gland"
+    },
+    "Ornenza": {
+      "common": "Goo",
+      "rare": "Shiny Feather"
+    },
+    "Winged Spirit": {
+      "rare": "Crystalium Ore"
+    },
+    "Phenchi": {
+      "common": "Flame Tendon",
+      "rare": "Shiny Feather"
+    },
+    "Corolus": {
+      "epic": "Zana"
+    },
+    "Leggy": {
+      "common": "Shiny Feather"
+    },
+    "Electrofly": {
+      "epic": "Dung"
+    },
+    "Steel Head": {
+      "common": "Stone",
+      "rare": "Iron Ore"
+    },
+    "Saka": {
+      "common": "Coagulated Blood"
+    },
+    "Forest Sprite": {
+      "rare": "Ectoplasm",
+      "epic": "Muddy Petal"
+    },
+    "Wintlet": {
+      "common": "Rough Fur",
+      "rare": "Frost Veins"
+    },
+    "Skeleton Servant": {
+      "common": "Bone"
+    },
+    "Skeleton Archer": {
+      "common": "Bone"
+    },
+    "Zombie": {
+      "common": "Rotten Meat"
+    },
+    "Salty Sailor": {
+      "common": "Rotten Meat",
+      "epic": "Marine Essence"
+    },
+    "Banshee": {
+      "rare": "Ectoplasm"
+    },
+    "Hot Banshee": {
+      "rare": "Ectoplasm"
+    },
+    "Pantucho": {
+      "common": "Bone",
+      "rare": "Ectoplasm"
+    },
+    "Zombie Goblin": {
+      "common": "Rotten Meat"
+    },
+    "Zombie Slime": {
+      "common": "Goo",
+      "rare": "Rotten Meat"
+    },
+    "Disturbing Silhouette": {
+      "rare": "Shadow Fragment"
+    },
+    "Scorched Juggler": {
+      "common": "Flame Tendon",
+      "rare": "Rotten Meat"
+    },
+    "Bruxis": {
+      "rare": "Ectoplasm"
+    },
+    "Candela": {
+      "rare": "Ember Gel"
+    },
+    "Illuminator": {
+      "rare": "Ember Gel"
+    },
+    "Vampire Kid": {
+      "common": "Rotten Meat",
+      "rare": "Coagulated Blood"
+    },
+    "Molo": {
+      "common": "Bone",
+      "epic": "Osseous Plaster"
+    },
+    "Barkling": {
+      "common": "Black Wood",
+      "epic": "Hollow Berry"
+    },
+    "Vengeful Doll": {
+      "common": "Black Wood",
+      "epic": "Incense"
+    },
+    "Slimbones": {
+      "common": "Bone",
+      "rare": "Hydro Gland"
+    },
+    "Living Tome": {
+      "rare": "Ectoplasm"
+    },
+    "Cute Abomination": {
+      "common": "Rotten Meat",
+      "rare": "Rough Fur"
+    },
+    "Rusty Knight": {
+      "rare": "Iron Ingot"
+    },
+    "Mechanical Cherub": {
+      "rare": "Iron Ingot"
+    },
+    "Torch Demon": {
+      "common": "Flame Tendon",
+      "rare": "Magma Shard"
+    },
+    "Druidmmer": {
+      "common": "Ectoplasm",
+      "rare": "Muddy Petal"
+    },
+    "Lost Yeti": {
+      "common": "Rough Fur",
+      "rare": "Frost Veins"
+    },
+    "Scale Disciple": {
+      "epic": "Oranite"
+    },
+    "Long Slime": {
+      "common": "Goo",
+      "epic": "Gooey Concentrate"
+    },
+    "Raging Gunner": {
+      "common": "Scraggy Meat",
+      "epic": "Resentment Serum"
+    },
+    "Wave Creeper": {
+      "common": "Bone",
+      "epic": "Marine Essence"
+    },
+    "Floating Armor": {
+      "common": "Iron Ingot",
+      "epic": "Ferrous Tincture"
+    },
+    "Merfolk Lancer": {
+      "common": "Hydro Gland"
+    },
+    "Wereshark": {
+      "common": "Hydro Gland"
+    },
+    "Trianha": {
+      "common": "Hydro Gland"
+    },
+    "Teddo": {
+      "common": "Rough Fur"
+    },
+    "Plibey": {
+      "rare": "Liconut",
+      "epic": "Sylvan Infusion"
+    },
+    "Fortifisand": {
+      "common": "Stone",
+      "epic": "Magic Sand"
+    },
+    "Zzoink": {
+      "common": "Scraggy Meat",
+      "epic": "Incense"
+    },
+    "Knife Thrower": {
+      "common": "Scraggy Meat"
+    },
+    "Cloud Drake": {
+      "common": "Hydro Gland"
+    },
+    "Chameledrake": {
+      "common": "Scraggy Meat",
+      "rare": "Flame Tendon",
+      "epic": "Crystalium Ore"
+    },
+    "Gle Sha": {
+      "common": "Stone"
+    },
+    "Mamclops": {
+      "common": "Rough Fur",
+      "rare": "Frost Veins"
+    },
+    "Cave Troll": {
+      "common": "Scraggy Meat",
+      "rare": "Frost Veins"
+    },
+    "Borealus": {
+      "common": "Frost Veins"
+    },
+    "Cloud Elemental": {
+      "rare": "Solidified Cloud"
+    },
+    "Buzzing Sniper": {
+      "rare": "Coagulated Blood"
+    },
+    "Petomp": {
+      "epic": "Springtime Humus"
+    },
+    "Gorritero": {
+      "common": "Shiny Feather"
+    },
+    "Moss Golem": {
+      "common": "Stone",
+      "epic": "Springtime Humus"
+    },
+    "Snapjaw": {
+      "common": "Coagulated Blood",
+      "rare": "Ember Gel"
+    },
+    "Sharptail": {
+      "common": "Rough Fur"
+    },
+    "Clawless": {
+      "common": "Rough Fur"
+    },
+    "Bubblex": {
+      "rare": "Ocular Bubble"
+    },
+    "Piedredge": {
+      "rare": "Magma Shard",
+      "epic": "Obsidian Shard"
+    },
+    "Tundra Ranger": {
+      "rare": "Shiny Feather"
+    },
+    "Brachesert": {
+      "rare": "Hydro Gland"
+    },
+    "White Dragonling": {
+      "common": "Frost Veins"
+    },
+    "Bandikko": {
+      "common": "Scraggy Meat"
+    },
+    "Electrolicko": {
+      "common": "Hydro Gland"
+    },
+    "Diamond Head": {
+      "rare": "Crystal Ingot"
+    },
+    "Lunamoon": {
+      "rare": "Moon Crystal"
+    },
+    "Skullhead": {
+      "common": "Rotten Meat",
+      "epic": "Cursed Skull"
+    },
+    "Rotspore Brute": {
+      "common": "Condensed Spores",
+      "rare": "Gastric Sac",
+      "epic": "Fungal Extract"
+    },
+    "Infected Juggler": {
+      "common": "Condensed Spores",
+      "rare": "Rotten Meat"
+    },
+    "Stottro": {
+      "rare": "Coagulated Blood",
+      "epic": "Resentment Serum"
+    },
+    "Corpse Crop": {
+      "rare": "Rotten Meat"
+    },
+    "Vampire Adept": {
+      "common": "Coagulated Blood"
+    },
+    "Baby Shadow": {
+      "common": "Shadow Fragment"
+    },
+    "Ronin Zombie": {
+      "common": "Rotten Meat"
+    },
+    "Drowned Bucaneer": {
+      "common": "Rotten Meat",
+      "epic": "Marine Essence"
+    },
+    "Skunicorn": {
+      "common": "Bone",
+      "epic": "Cursed Skull"
+    },
+    "Cryoadorer": {
+      "common": "Rotten Meat",
+      "rare": "Frost Veins"
+    },
+    "Demon Sprout": {
+      "rare": "Muddy Petal"
+    },
+    "Trumpet Skeleton": {
+      "common": "Bone",
+      "epic": "Prismatic Tonic"
+    },
+    "Crowmere": {
+      "epic": "Moon Crystal"
+    },
+    "Cog Knight": {
+      "common": "Iron Ingot"
+    },
+    "Mechanical Angel": {
+      "common": "Iron Ingot"
+    },
+    "Molten Demon": {
+      "common": "Flame Tendon",
+      "rare": "Magma Shard"
+    },
+    "Great Dryad": {
+      "common": "Ectoplasm",
+      "rare": "Muddy Petal"
+    },
+    "Strong Yeti": {
+      "common": "Rough Fur",
+      "rare": "Frost Veins"
+    },
+    "Draconid Commander": {
+      "epic": "Oranite"
+    },
+    "Vertebral Corsair": {
+      "common": "Bone",
+      "rare": "Marine Essence",
+      "epic": "Death Dust"
+    },
+    "Floro": {
+      "rare": "Springtime Humus"
+    },
+    "Anchored Soul": {
+      "common": "Marine Essence"
+    },
+    "Sunchi": {
+      "epic": "Fantasy Calx"
+    },
+    "Righteous Hand": {
+      "common": "Stone",
+      "rare": "Ocular Bubble",
+      "epic": "Oranite"
+    },
+    "Storm Elemental": {
+      "rare": "Solidified Cloud",
+      "epic": "Prismatic Tonic"
+    },
+    "Rune Guardian": {
+      "epic": "Oranite"
+    },
+    "Karma Hand": {
+      "epic": "Oranite"
+    },
+    "Flamtail": {
+      "common": "Rough Fur",
+      "rare": "Flame Tendon"
+    },
+    "Eplepe": {
+      "common": "Ocular Bubble",
+      "rare": "Protein Concentrate",
+      "epic": "Moon Crystal"
+    },
+    "Deathbloom": {
+      "common": "Muddy Petal",
+      "epic": "Death Dust"
+    },
+    "Stormwing": {
+      "common": "Shiny Feather",
+      "rare": "Prismatic Tonic"
+    },
+    "Phoenix": {
+      "common": "Shiny Feather",
+      "rare": "Fantasy Calx"
+    },
+    "Infernal Blade": {
+      "common": "Magma Shard"
+    },
+    "Twilight Armor": {
+      "common": "Iron Ingot",
+      "epic": "Moon Crystal"
+    },
+    "Dozz": {
+      "epic": "Moon Crystal"
+    },
+    "Cursed Scale": {
+      "epic": "Death Dust"
+    },
+    "Ferrous Knuckle": {
+      "common": "Iron Ingot"
+    }
+  }
+}
+</script>
 <script>
 'use strict';
 const SEED=JSON.parse(document.getElementById('seedData').textContent);
+const GAME=JSON.parse(document.getElementById('gameData').textContent);
 const storeLocations=SEED.storeLocations||{};
 const STORAGE_KEY='monster-alchemy-planner-v1';
 const original=SEED.recipes;
@@ -5239,12 +9330,14 @@ const ITEM_ALIASES=[
  ['Reactive Powder','Reactive Dust'],['Crystaline Ore','Crystalium Ore'],
  ['Dark Wood','Black Wood'],['Congealed Blood','Coagulated Blood'],
  ['Polar Dust','Polar Powder'],['Toxic Bubble','Ocular Bubble'],
- ['Occular Bubble','Ocular Bubble']
+ ['Occular Bubble','Ocular Bubble'],['Feather','Shiny Feather'],
+ ['Gooey Mix','Gooey Concentrate']
 ];
 // Asset names and previous recipe spelling were not the in-game monster names.
 const MONSTER_ALIASES=[
  ['Electro Fly','Drosophibuzz'],['Plibey','Leafey'],
- ['Ghost Dog','Pantucho'],['Phantucho','Pantucho']
+ ['Ghost Dog','Pantucho'],['Phantucho','Pantucho'],
+ ['Blue Jigou','Lost Yeti'],['Gigajigou','Strong Yeti']
 ];
 let saved={};
 try{saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')}catch(e){saved={}}
@@ -5281,7 +9374,7 @@ function migrateQueue(entries){
  for(const entry of Array.isArray(entries)?entries:[]){
   if(!entry||typeof entry.id!=='string')continue;
   const id=entry.id==='f145'||entry.id==='f156'?'f141':entry.id;
-  if(!original.some(r=>r.id===id)&&!custom.some(r=>r.id===id))continue;
+  if(!original.some(r=>r.id===id)&&!custom.some(r=>r.id===id)&&!GAME.fusionVariants.some(r=>r.id===id))continue;
   const qty=Math.max(0,Math.min(99999999,Math.floor(Number(entry.qty)||0)));
   if(qty)totals.set(id,Math.min(99999999,(totals.get(id)||0)+qty));
  }
@@ -5290,6 +9383,7 @@ function migrateQueue(entries){
 let queue=migrateQueue(saved.queue);
 let inventoryView='item',craftView='monster',inventoryTier='all',craftTier='all',craftStation='all',summaryExpanded=false;
 let recipes=[],recipesByResult=new Map(),items=[],monsters=[],missingItems=[],allMonstersTier=new Map(),currentQueueReport=null,availableAfterQueue=null;
+const ASSUMED_TIER3_MONSTERS=new Set(['Buzzing Sniper','Cog Knight','Cryoadorer','Ferrous Knuckle','Flame Head','Infected Juggler','Infernal Blade','Knife Thrower','Lost Yeti','Mechanical Angel','Mechanical Cherub','Rune Guardian','Rusty Knight','Strong Yeti','Twilight Armor','Zzoink']);
 const collator=new Intl.Collator(undefined,{numeric:true,sensitivity:'base'});
 const niceSort=(a,b)=>collator.compare(a,b);
 const key=(kind,name)=>`${kind}:${name}`;
@@ -5301,9 +9395,25 @@ function toast(msg){$('toast').textContent=msg;$('toast').classList.remove('hidd
 function titleCase(s){return s.replace(/\s+/g,' ').trim().replace(/\b[a-z]/g,x=>x.toUpperCase())}
 function canonicalUserName(n,kind){n=n.trim();if(kind==='item')n=ITEM_ALIASES.find(x=>x[0].toLowerCase()===n.toLowerCase())?.[1]||n;if(kind==='monster')n=MONSTER_ALIASES.find(x=>x[0].toLowerCase()===n.toLowerCase())?.[1]||n;const match=(kind==='monster'?monsters:items).find(x=>x.toLowerCase()===n.toLowerCase());return match||titleCase(n)}
 function rebuildData(){
- recipes=[...original,...custom];recipesByResult=new Map();
- const itemSet=new Set(),monSet=new Set(SEED.artInventoryMonsters||[]);allMonstersTier=new Map();
+ const knownMonsters=new Set([...(SEED.artInventoryMonsters||[])]);
+ const tiers=new Map();
+ for(const r of [...original,...custom]){
+  if(r.kind==='monster'){knownMonsters.add(r.name);if(r.tier!=null&&!tiers.has(r.name))tiers.set(r.name,r.tier)}
+  for(const i of r.ingredients)if(i.kind==='monster')knownMonsters.add(i.name);
+ }
+ const signature=r=>r.name+'|'+r.station+'|'+r.ingredients.map(i=>`${i.kind}:${i.name}:${i.qty}`).sort().join('|');
+ const seenFusion=new Set([...original,...custom].filter(r=>r.station?.includes('Fusion')).map(signature));
+ const imported=[];
+ for(const variant of GAME.fusionVariants){
+  if(!knownMonsters.has(variant.result)||variant.inputs.some(i=>i.kind==='monster'&&!knownMonsters.has(i.name)))continue;
+  const r={id:variant.id,kind:'monster',name:variant.result,station:'Fusion',tier:tiers.get(variant.result)|| (ASSUMED_TIER3_MONSTERS.has(variant.result)?3:null),ingredients:variant.inputs,warnings:[]};
+  const fingerprint=signature(r);if(seenFusion.has(fingerprint))continue;
+  seenFusion.add(fingerprint);imported.push(r);
+ }
+ recipes=[...original,...imported,...custom];recipesByResult=new Map();
+ const itemSet=new Set(Object.keys(GAME.itemSources)),monSet=new Set(SEED.artInventoryMonsters||[]);allMonstersTier=new Map();
  for(const recipe of recipes){
+  if(recipe.station?.includes('Fusion'))recipe.station='Fusion';
   const k=key(recipe.kind,recipe.name);
   if(!recipesByResult.has(k))recipesByResult.set(k,[]);
   recipesByResult.get(k).push(recipe);
@@ -5313,9 +9423,10 @@ function rebuildData(){
  }
  /* Old quantities are retained in saved data, but unused/key items do not clutter inventory. */
  Object.keys(stock.monster).forEach(n=>monSet.add(n));
+ for(const name of ASSUMED_TIER3_MONSTERS)if(monSet.has(name)&&!allMonstersTier.has(name))allMonstersTier.set(name,3);
  items=[...itemSet].sort(niceSort);monsters=[...monSet].sort(niceSort);
  missingItems=items.filter(n=>!SEED.baseSources[n]&&!storeLocations[n]&&!recipesByResult.has(key('item',n)));
- $('gapCount').textContent=missingItems.length;rebuildFilters();
+ rebuildFilters();
 }
 const cloneState=(s)=>({used:{...s.used},missing:{...s.missing},unknown:new Set(s.unknown),types:new Set(s.types),steps:{...s.steps},order:[...s.order]});
 const emptyState=()=>({used:{},missing:{},unknown:new Set(),types:new Set(),steps:{},order:[]});
@@ -5323,33 +9434,37 @@ const add=(obj,k,q)=>{obj[k]=(obj[k]||0)+q};
 function makePool(){const p={};for(const kind of ['item','monster'])for(const n of Object.keys(stock[kind]))p[key(kind,n)]=getStock(kind,n);return p}
 // Resolve one need; consume current stock before synthesizing a shortfall from known recipes.
 function fulfill(ing,qty,pool,state,stack=[],depth=0){
- if(ing.kind==='type'){state.types.add(ing.name);return}
+ const node={kind:ing.kind,name:ing.name,qty,held:0,needed:qty,recipeId:null,children:[]};
+ if(ing.kind==='type'){state.types.add(ing.name);return node}
  const k=key(ing.kind,ing.name),available=pool[k]||0,take=Math.min(available,qty);
  if(take){pool[k]-=take;add(state.used,k,take)}
- const need=qty-take;if(!need)return;
+ const need=qty-take;node.held=take;node.needed=need;if(!need)return node;
  const choices=(recipesByResult.get(k)||[]).filter(x=>!stack.includes(x.id)&&!x.ingredients.some(y=>y.kind==='type'));
- if(depth>=15||!choices.length){add(state.missing,k,need);if(!SEED.baseSources[ing.name]&&!recipesByResult.has(k))state.unknown.add(ing.name);return}
+ if(depth>=15||!choices.length){add(state.missing,k,need);if(!SEED.baseSources[ing.name]&&!recipesByResult.has(k))state.unknown.add(ing.name);return node}
  let best=null;
  for(const recipe of choices){
   const attemptPool={...pool},attemptState=cloneState(state);
-  makeCraft(recipe,need,attemptPool,attemptState,[...stack,recipe.id],depth+1);
+  const children=makeCraft(recipe,need,attemptPool,attemptState,[...stack,recipe.id],depth+1);
   const short=Object.values(attemptState.missing).reduce((a,b)=>a+b,0);
   const score=short*100000+attemptState.types.size*100000+attemptState.unknown.size*1000 + Object.values(attemptState.steps).reduce((a,b)=>a+b,0);
-  if(!best||score<best.score)best={score,pool:attemptPool,state:attemptState};
+  if(!best||score<best.score)best={score,pool:attemptPool,state:attemptState,children,recipe};
  }
  Object.assign(pool,best.pool);Object.assign(state,best.state);
+ node.recipeId=best.recipe.id;node.children=best.children;
+ return node;
 }
 function makeCraft(recipe,qty,pool,state,stack=[],depth=0){
- for(const ing of recipe.ingredients)fulfill(ing,ing.qty*qty,pool,state,stack,depth);
+ const children=recipe.ingredients.map(ing=>fulfill(ing,ing.qty*qty,pool,state,stack,depth));
  add(state.steps,recipe.id,qty);
  state.order.push(recipe.id);
+ return children;
 }
 function plan(recipe,qty,pool){
- const poolCopy={...pool},state=emptyState();makeCraft(recipe,qty,poolCopy,state,[recipe.id],0);
+ const poolCopy={...pool},state=emptyState(),tree=makeCraft(recipe,qty,poolCopy,state,[recipe.id],0);
  const missing=Object.entries(state.missing).filter(([k,v])=>v>0);
  const prep=Object.entries(state.steps).filter(([id,n])=>id!==recipe.id&&n>0);
  const status=state.types.size?'type':missing.length?'short':prep.length?'prep':'ready';
- return {status,pool:poolCopy,...state,prep};
+ return {status,pool:poolCopy,...state,prep,tree};
 }
 function compileQueue(){
  let pool=makePool();const plans=[];const used={},steps={},missing={},types=new Set(),unknown=new Set(),order=[];
@@ -5365,7 +9480,41 @@ function compileQueue(){
  }
  return {plans,used,steps,missing,types,unknown,order,pool};
 }
-function recLabel(r){return r.station+ (r.tier?` · T${r.tier}`:'')}
+function recLabel(r){return r.station}
+function recipeLinesHtml(recipe){return recipe.ingredients.map(i=>`<span class="recipe-line">${escapeHtml(recipe.station==='Fusion'&&i.qty===1?i.name:`${i.qty} × ${i.name}`)}</span>`).join('')}
+function linkedRecipeLinesHtml(recipe){return recipe.ingredients.map(i=>`<span class="recipe-line">${recipe.station==='Fusion'&&i.qty===1?'':`${i.qty} × `}${keywordHtml(i.kind,i.name,i.name,-1)}</span>`).join('')}
+function keywordHtml(kind,name,label=name,tabIndex=0){return `<span class="keyword" role="button" tabindex="${tabIndex}" data-key-kind="${escapeHtml(kind)}" data-key-name="${escapeHtml(name)}" aria-label="Recipes and sources for ${escapeHtml(name)}">${escapeHtml(label)}</span>`}
+let popupHideTimer;
+let popupInspectTimer;
+function hideKeywordPopup(){clearTimeout(popupHideTimer);$('keywordPopup').hidden=true;$('keywordPopupNested').hidden=true}
+function schedulePopupHide(){clearTimeout(popupHideTimer);popupHideTimer=setTimeout(hideKeywordPopup,500)}
+function showKeywordPopup(target){
+ clearTimeout(popupHideTimer);
+ const kind=target.dataset.keyKind,name=target.dataset.keyName;
+ const parent=target.closest('.keyword-popup');
+ const popup=$(parent?'keywordPopupNested':'keywordPopup');
+ if(!parent)$('keywordPopupNested').hidden=true;
+ const options=recipesByResult.get(key(kind,name))||[];
+ const seen=new Set();
+ const recipeList=options.filter(r=>{const fingerprint=r.station+'|'+r.ingredients.map(i=>`${i.kind}:${i.name}:${i.qty}`).sort().join('|');if(seen.has(fingerprint))return false;seen.add(fingerprint);return true});
+ const recipesHtml=recipeList.length?recipeList.map(r=>`<div class="popup-recipe" role="button" tabindex="0" data-popup-recipe="${escapeHtml(r.id)}" aria-label="Add ${escapeHtml(name)} using the ${escapeHtml(r.station)} recipe to the wanted list"><div class="popup-recipe-head"><b>${escapeHtml(r.station)}</b><button type="button" data-popup-recipe="${escapeHtml(r.id)}" title="Add this recipe to the wanted list">+ Wanted</button></div>${linkedRecipeLinesHtml(r)}</div>`).join(''):'<p>No recipe recorded.</p>';
+ let sources='';
+ if(kind==='item'){
+  if(SEED.baseSources[name])sources+=`<p>${escapeHtml(SEED.baseSources[name])}</p>`;
+  if(storeTown(name))sources+=`<p>Sold in ${escapeHtml(storeTown(name))}</p>`;
+  const drops=GAME.itemSources[name]||[];
+  if(drops.length)sources+=`<p>Dropped by ${drops.map(d=>`${keywordHtml('monster',d.monster,d.monster,-1)} (${escapeHtml(d.rarity)})`).join(', ')}</p>`;
+ }else{
+  const drops=GAME.monsterRewards[name]||{};
+  if(Object.keys(drops).length)sources+=`<p>Drops: ${Object.entries(drops).map(([rarity,item])=>`${keywordHtml('item',item,item,-1)} (${escapeHtml(rarity)})`).join(', ')}</p>`;
+ }
+ popup.innerHTML=`<h3>${escapeHtml(name)}</h3><h4>Recipes</h4>${recipesHtml}<h4>${kind==='item'?'Where to get it':'Rewards and location'}</h4>${sources||'<p>Location not recorded.</p>'}`;
+ popup.hidden=false;
+ const box=(parent||target).getBoundingClientRect();
+ const width=popup.offsetWidth,height=popup.offsetHeight;
+ popup.style.left=`${Math.max(10,Math.min(window.innerWidth-width-10,box.right>window.innerWidth-width?box.left-width:box.right))}px`;
+ popup.style.top=`${Math.max(10,Math.min(window.innerHeight-height-10,box.top))}px`;
+}
 function displayItem(k,n){return `${n.toLocaleString()} ${k.split(':').slice(1).join(':')}`}
 function badge(r){const ab=r.name.split(/\s+/).map(x=>x[0]).slice(0,2).join('');return ab.length===1?r.name.slice(0,2).toUpperCase():ab.toUpperCase()}
 function slug(s){return s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
@@ -5388,7 +9537,7 @@ function ingredientIcon(kind,name){
  return `<img class="ingredient-icon" data-icon="${id}" src="${path}" alt="" loading="lazy" onerror="iconError(this)">`;
 }
 
-function craftIconHtml(kind,name){const path=`images/${kind==='item'?'items':'monsters'}/${slug(name)}.png`;return `<span class="craft-icon"><span>${escapeHtml(badge({name}))}</span><img src="${path}" alt="" loading="lazy" data-icon="${kind}:${slug(name)}" onerror="iconError(this)">${storeBadge(kind,name)}</span>`}
+function craftIconHtml(kind,name){const path=`images/${kind==='item'?'items':'monsters'}/${slug(name)}.png`;return `<span class="craft-icon"><span>${escapeHtml(badge({name}))}</span><img src="${path}" alt="" loading="lazy" data-icon="${kind}:${slug(name)}" onerror="iconError(this)"></span>`}
 function iconHtml(kind,name,cls=''){
  const path=`images/${kind==='item'?'items':'monsters'}/${slug(name)}.png`;
  return `<span class="placeholder ${kind==='monster'?'monster':''} ${cls}" aria-hidden="true"><span>${escapeHtml(badge({name}))}</span><img src="${path}" alt="" loading="lazy" data-icon="${kind}:${slug(name)}" onerror="iconError(this)">${storeBadge(kind,name)}</span>`;
@@ -5396,26 +9545,33 @@ function iconHtml(kind,name,cls=''){
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function rebuildFilters(){
  const inv=$('inventoryTiers');inv.hidden=inventoryView!=='monster';
- inv.innerHTML=['all','1','2','3','other'].map(t=>`<button class="filter ${inventoryTier===t?'active':''}" data-tier="${t}">${t==='all'?'All':t==='other'?'Other':'T'+t}</button>`).join('');
+ const inventoryTierOptions=['all','1','2','3'];
+ if(monsters.some(n=>!allMonstersTier.has(n)))inventoryTierOptions.push('other');
+ inv.innerHTML=inventoryTierOptions.map(t=>`<button class="filter ${inventoryTier===t?'active':''}" data-tier="${t}">${t==='all'?'All':t==='other'?'Other':'T'+t}</button>`).join('');
  const cra=$('craftTiers');const show=craftView==='monster'||craftView==='fusion';cra.hidden=!show;
  cra.innerHTML=['all','1','2','3','other'].map(t=>`<button class="filter ${craftTier===t?'active':''}" data-tier="${t}">${t==='all'?'All':t==='other'?'Other':'T'+t}</button>`).join('');
  const stations=[...new Set(recipes.filter(r=>craftView==='item'?r.kind==='item':craftView==='monster'?r.kind==='monster'&&!r.station.includes('Fusion'):r.kind==='monster'&&r.station.includes('Fusion')).map(r=>r.station))].sort(niceSort);
- $('craftStations').hidden=craftView==='gaps';
+ $('craftStations').hidden=craftView!=='item';
  $('craftStations').innerHTML=['all',...stations].map(st=>`<button class="filter ${craftStation===st?'active':''}" data-station="${escapeHtml(st)}">${st==='all'?'All stations':escapeHtml(st)}</button>`).join('');
 }
 function renderInventory(){
  const q=$('inventorySearch').value.trim().toLowerCase();
  const names=(inventoryView==='item'?items:monsters).filter(n=>n.toLowerCase().includes(q) &&(inventoryView==='item'||inventoryTier==='all'||(inventoryTier==='other'?!allMonstersTier.has(n):String(allMonstersTier.get(n))===inventoryTier)));
- $('inventoryGrid').innerHTML=names.map(n=>{const amount=getStock(inventoryView,n);return `<div class="inv-card ${amount?'has-stock':''}" data-name="${escapeHtml(n)}" data-kind="${inventoryView}">${iconHtml(inventoryView,n)}<div class="inv-name" title="${escapeHtml(SEED.baseSources[n]||n)}">${escapeHtml(n)}</div>${inventoryView==='item'&&n==='Coagulated Blood'?'<div class="drop-source" title="Drops from Saka">Saka drop</div>':''}${storeTown(n)&&inventoryView==='item'?`<div class="store-source" title="Also sold in ${escapeHtml(storeTown(n))}">${escapeHtml(storeTown(n))}</div>`:''}<div class="qty-wrap"><label>Qty</label><input class="qty" type="text" inputmode="numeric" pattern="[0-9]*" value="${amount||''}" placeholder="0" aria-label="${escapeHtml(n)} quantity" autocomplete="off" spellcheck="false"></div><div class="reserved-info" hidden></div></div>`}).join('')||'<div class="empty">No matches. Try a different search or tier.</div>';
+ const card=n=>{const amount=getStock(inventoryView,n);return `<div class="inv-card ${amount?'has-stock':''}" data-name="${escapeHtml(n)}" data-kind="${inventoryView}">${iconHtml(inventoryView,n)}<div class="inv-name">${keywordHtml(inventoryView,n)}</div>${storeTown(n)&&inventoryView==='item'?`<div class="store-source" title="Also sold in ${escapeHtml(storeTown(n))}">${escapeHtml(storeTown(n))}</div>`:''}<div class="qty-wrap"><label>Qty</label><input class="qty" type="text" inputmode="numeric" pattern="[0-9]*" value="${amount||''}" placeholder="0" aria-label="${escapeHtml(n)} quantity" autocomplete="off" spellcheck="false"></div><div class="reserved-info" hidden></div></div>`};
+ let inventoryContent='';
+ if(inventoryView==='monster'){
+  const groups=new Map();
+  for(const n of names){const tier=allMonstersTier.get(n)||'other';if(!groups.has(tier))groups.set(tier,[]);groups.get(tier).push(n)}
+  inventoryContent=[...groups].sort(([a],[b])=>(a==='other'?99:Number(a))-(b==='other'?99:Number(b))).map(([tier,group])=>`<h3 class="inventory-tier">${tier==='other'?'Other monsters':`Tier ${tier}`}</h3>${group.map(card).join('')}`).join('');
+ }else inventoryContent=names.map(card).join('');
+ $('inventoryGrid').innerHTML=inventoryContent||'<div class="empty">No matches. Try a different search or tier.</div>';
  updateInventoryReservations();
  $('itemCount').textContent=names.length+' entries';
- const count=(inventoryView==='item'?items:monsters).filter(n=>getStock(inventoryView,n)>0).length;
- $('inventoryStat').textContent=count+' / '+(inventoryView==='item'?items:monsters).length+' stocked';
 }
 function getWorkshopRecipes(){
  const subset=recipes.filter(r=>craftView==='item'?r.kind==='item':craftView==='monster'?r.kind==='monster'&&!r.station.includes('Fusion'):r.kind==='monster'&&r.station.includes('Fusion'));
  const seen=new Set();
- return subset.filter(r=>{const fingerprint=r.name+'|'+JSON.stringify(r.ingredients);if(seen.has(fingerprint))return false;seen.add(fingerprint);return true})
+ return subset.filter(r=>{const fingerprint=r.kind+'|'+r.name;if(seen.has(fingerprint))return false;seen.add(fingerprint);return true})
   .filter(r=>r.name.toLowerCase().includes($('craftSearch').value.trim().toLowerCase())
     &&(craftTier==='all'||(craftTier==='other'?r.tier==null:String(r.tier)===craftTier))
     &&(craftStation==='all'||craftStation===r.station));
@@ -5423,38 +9579,35 @@ function getWorkshopRecipes(){
 function availabilityRank(s){return s==='ready'?0:s==='prep'?1:2}
 function tierRank(r){return r.tier==null?99:Number(r.tier)}
 function stationClass(name){return 'station-'+slug(name)}
-function workshopHeading(tier,count){
- const label=tier==='other'?'Unclassified Tier':`Tier ${tier}`;
- return `<div class="tier-heading"><h3>${label}</h3><span>${count} ${count===1?'recipe':'recipes'}</span></div>`;
+function workshopHeading(tier){
+ const label=tier==='other'?'Other':`T${tier}`;
+ return `<div class="tier-heading"><h3>${label}</h3></div>`;
 }
 function renderWorkshop(){
- $('workshopControls').hidden=craftView==='gaps';
  const body=$('craftBody');
- if(craftView==='gaps'){
-  $('workshopStat').textContent=missingItems.length+' to review';
-  body.innerHTML=`<div class="gap-note"><b>Unresolved ingredient sources.</b> These ingredients appear in recipes, but have neither a known crafting formula nor a documented gathering source. Known non-craftable materials are tracked in inventory and are not reported as missing recipes.<br><br>Coagulated Blood is obtainable from Saka, and is not a crafting gap.</div><div class="gaps">${missingItems.map(n=>`<div class="gap"><div><b>${escapeHtml(n)}</b><small>Recipe / source unknown</small></div><button data-fill="${escapeHtml(n)}">+ Recipe</button></div>`).join('')}</div><div class="gap-note" style="margin-top:15px">${SEED.notes.map(n=>escapeHtml(n)).join('<br><br>')}</div>`;
-  return;
- }
  const assessed=getWorkshopRecipes().map(r=>({r,p:plan(r,1,availableAfterQueue)}));
  assessed.sort((a,b)=>tierRank(a.r)-tierRank(b.r)||availabilityRank(a.p.status)-availabilityRank(b.p.status)||niceSort(a.r.name,b.r.name)||niceSort(recLabel(a.r),recLabel(b.r)));
  const nReady=assessed.filter(x=>x.p.status==='ready').length,nPrep=assessed.filter(x=>x.p.status==='prep').length;
  const qMap=Object.fromEntries(queue.map(q=>[q.id,q.qty]));
  const card=({r,p})=>{
   const status=p.status==='ready'?'Ready':p.status==='prep'?'Prep first':p.status==='type'?'Type needed':'Short';
-  const rem=Object.entries(p.missing).filter(([k,n])=>n>0).slice(0,3).map(([k,n])=>displayItem(k,n)).join(', ');
-  const tip=p.types.size?'Requires typed monsters: '+[...p.types].join(', '):rem?'Missing '+rem:p.prep.length?'Make '+p.prep.map(([id,n])=>`${n} ${recipes.find(x=>x.id===id)?.name||id}`).join(', '):'Ready with current supplies';
   const selected=qMap[r.id]||0;
-  const lines=r.ingredients.map(i=>`<span class="ingredient-line">${ingredientIcon(i.kind,i.name)}<span>${escapeHtml(i.qty+' × '+i.name)}${storeIngredientBadge(i.kind,i.name)}</span></span>`).join('');
-  return `<button class="crafted ${p.status} ${selected?'chosen':''}" data-id="${r.id}" title="${escapeHtml(tip)}" aria-label="Queue ${escapeHtml(r.name)}, ${status}">${selected?`<span class="count">×${selected}</span>`:''}<span class="craft-top">${craftIconHtml(r.kind,r.name)}</span><span class="craft-name">${escapeHtml(r.name)}</span><span class="craft-station ${stationClass(r.station)}">${escapeHtml(recLabel(r))}</span>${r.kind==='item'&&storeTown(r.name)?`<span class="craft-store">🏪 ${escapeHtml(storeTown(r.name))}</span>`:''}<span class="craft-ingredients">${lines}</span><span class="craft-footer"><span class="availability ${p.status}">${status}</span><span class="plus">+</span></span></button>`;
+  return `<button class="crafted ${r.kind} ${p.status} ${selected?'chosen':''}" data-id="${r.id}" aria-label="Queue ${escapeHtml(r.name)}, ${status}">${selected?`<span class="count">×${selected}</span>`:''}<span class="craft-top">${craftIconHtml(r.kind,r.name)}</span><span class="craft-name">${keywordHtml(r.kind,r.name,r.name,-1)}</span></button>`;
  };
  let content='';
  if(craftView==='item')content=`<div class="craft-grid">${assessed.map(card).join('')}</div>`;
  else{
   const groups=new Map();
   for(const row of assessed){const k=row.r.tier==null?'other':String(row.r.tier);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(row)}
-  content=[...groups].map(([tier,group])=>`<section class="tier-section">${workshopHeading(tier,group.length)}<div class="craft-grid">${group.map(card).join('')}</div></section>`).join('');
+  content=[...groups].map(([tier,group])=>{
+   const cards=craftView==='monster'?[...new Set(['Summoning','Necromancy',...group.map(x=>x.r.station)])].map(station=>{
+    const rows=group.filter(x=>x.r.station===station);
+    return rows.length?`<section class="station-section"><h4 class="station-heading ${stationClass(station)}">${escapeHtml(station)}</h4><div class="craft-grid">${rows.map(card).join('')}</div></section>`:'';
+   }).join(''):`<div class="craft-grid">${group.map(card).join('')}</div>`;
+   return `<section class="tier-section">${workshopHeading(tier)}${cards}</section>`;
+  }).join('');
  }
- body.innerHTML=`<div class="intro"><span>✧</span><small><b>${nReady} ready</b> · <b>${nPrep} need prep</b> · ${assessed.length} listed. <span class="legend ready-mark">Green = ready</span> · <span class="legend prep-mark">Yellow = needs steps</span> · <span class="legend short-mark">Black = unavailable</span>. Click to queue; each additional click adds one. A bright outer yellow outline marks queued recipes.</small></div>${content}${!assessed.length?'<div class="empty">No recipes match those filters.</div>':''}`;
+ body.innerHTML=`${content}${!assessed.length?'<div class="empty">No recipes match those filters.</div>':''}`;
  $('workshopStat').textContent=`${nReady} ready · ${nPrep} prep`;
 }
 function updateInventoryReservations(){
@@ -5466,6 +9619,29 @@ function updateInventoryReservations(){
  }
 }
 function stepText(recipeId,n){const r=recipes.find(x=>x.id===recipeId);return r?`${n} × ${r.name} <span class="muted">(${r.station})</span>`:`${n} × ${recipeId}`}
+function stockControlsHtml(kind,name){return kind==='type'?'':`<button data-stock-action="minus" data-kind="${escapeHtml(kind)}" data-name="${escapeHtml(name)}" title="Remove one ${escapeHtml(name)} from inventory">−</button><button data-stock-action="plus" data-kind="${escapeHtml(kind)}" data-name="${escapeHtml(name)}" title="Add one ${escapeHtml(name)} to inventory">+</button>`}
+function renderQueuePreview(ingredient,qty,depth,seen){
+ const held=ingredient.kind==='type'?0:getStock(ingredient.kind,ingredient.name);
+ const k=key(ingredient.kind,ingredient.name);
+ const recipe=depth<6&&!seen.has(k)?(recipesByResult.get(k)||[]).find(r=>!r.ingredients.some(i=>i.kind==='type')):null;
+ const branch=recipe?`<div class="queue-branch"><div class="queue-branch-label">${escapeHtml(recipe.station)} recipe</div>${recipe.ingredients.map(i=>renderQueuePreview(i,i.qty*qty,depth+1,new Set([...seen,k]))).join('')}</div>`:'';
+ return `<div class="queue-ingredient"><div class="queue-ingredient-row ${ingredient.kind!=='type'&&held>=qty?'green':''}">${keywordHtml(ingredient.kind,ingredient.name)}<span class="need">${ingredient.kind==='type'?'Match type':`${held}/${qty} on hand`}</span>${stockControlsHtml(ingredient.kind,ingredient.name)}</div>${branch}</div>`;
+}
+function renderQueueNode(node,depth=0){
+ const covered=node.kind!=='type'&&node.held>=node.qty;
+ const state=node.kind==='type'?'short':covered?'green':node.children.length?'':'short';
+ const controls=stockControlsHtml(node.kind,node.name);
+ const status=node.kind==='type'?'Match type':`${node.held}/${node.qty} held`;
+ let branch='';
+ if(node.recipeId){
+  const recipe=recipes.find(r=>r.id===node.recipeId);
+  branch=`<div class="queue-branch"><div class="queue-branch-label">${escapeHtml(recipe?.station||'Recipe')} · craft ${node.needed}</div>${node.children.map(child=>renderQueueNode(child,depth+1)).join('')}</div>`;
+ }else if(node.kind!=='type'&&depth<5){
+  const preview=(recipesByResult.get(key(node.kind,node.name))||[])[0];
+  if(preview)branch=`<div class="queue-preview"><div class="queue-branch-label">Recipe if crafting · ${escapeHtml(preview.station)}</div>${preview.ingredients.map(i=>renderQueuePreview(i,i.qty*node.qty,depth+1,new Set([key(node.kind,node.name)]))).join('')}</div>`;
+ }
+ return `<div class="queue-ingredient"><div class="queue-ingredient-row ${state}">${keywordHtml(node.kind,node.name)}<span class="need">${status}</span>${controls}</div>${branch}</div>`;
+}
 function renderQueue(){
  currentQueueReport=compileQueue();availableAfterQueue=currentQueueReport.pool;updateInventoryReservations();
  const popup=$('queuePopup');
@@ -5475,27 +9651,13 @@ function renderQueue(){
  $('queueBrief').textContent=Object.keys(currentQueueReport.missing).length||currentQueueReport.types.size?'Some plans have unmet requirements':'Resources reserved — not yet spent';
  $('queueScroll').innerHTML=currentQueueReport.plans.map(({entry,rec,result})=>{
   const ok=!Object.values(result.missing).some(n=>n>0)&&!result.types.size;
-  const needs=Object.entries(result.missing).filter(([k,n])=>n>0).map(([k,n])=>displayItem(k,n));
-  const steps=result.prep.map(([id,n])=>`${n} × ${recipes.find(r=>r.id===id)?.name}`).join(', ');
-  const detail=ok?(steps?'Craft first: '+steps:'All direct ingredients available'):
-   [needs.length?'Need: '+needs.join(', '):'',result.types.size?'Resolve monster types: '+[...result.types].join(', '):''].filter(Boolean).join(' · ');
-  return `<div class="queue-entry"><div class="queue-row"><div><strong>${escapeHtml(rec.name)} <span style="color:var(--gold)">×${entry.qty}</span></strong><small>${escapeHtml(recLabel(rec))}</small></div><div class="entry-actions"><button title="Decrease amount" data-action="minus" data-id="${rec.id}">−</button><button title="Increase amount" data-action="plus" data-id="${rec.id}">+</button><button class="cancel" title="Cancel and release reservation" data-action="cancel" data-id="${rec.id}">×</button><button class="confirm" title="Confirm crafted: spend reserved inputs and add the result" data-action="confirm" data-id="${rec.id}" ${ok?'':'disabled'}>✓</button></div></div><div class="queue-line ${ok?'good':'bad'}">${escapeHtml(detail)}</div></div>`
+  return `<div class="queue-entry"><div class="queue-row"><div><strong>${keywordHtml(rec.kind,rec.name)} <span style="color:var(--gold)">×${entry.qty}</span></strong><small>${escapeHtml(recLabel(rec))}</small></div><div class="entry-actions"><button title="Decrease amount" data-action="minus" data-id="${rec.id}">−</button><button title="Increase amount" data-action="plus" data-id="${rec.id}">+</button><button class="cancel" title="Cancel and release reservation" data-action="cancel" data-id="${rec.id}">×</button><button class="confirm" title="Confirm crafted: spend reserved inputs and add the result" data-action="confirm" data-id="${rec.id}" ${ok?'':'disabled'}>✓</button></div></div>${result.tree.map(node=>renderQueueNode(node)).join('')}</div>`
  }).join('');
- const own=currentQueueReport;
- const queueRecipeIds=new Set(queue.map(x=>x.id));
- const prep=own.order.filter(id=>!queueRecipeIds.has(id)&&own.steps[id]>0);
- const missing=Object.entries(own.missing).filter(([k,n])=>n>0);
- const required=[...Object.entries(own.used).filter(([k,v])=>v>0).sort(([a],[b])=>niceSort(a,b))];
- let breakdown='';
- if(prep.length)breakdown+=`<b>Craft these intermediates:</b><br>${prep.map(id=>'• '+stepText(id,own.steps[id])).join('<br>')}<br><br>`;
- if(required.length)breakdown+=`<b>Reserved from inventory:</b><br>${required.map(([k,n])=>'• '+escapeHtml(displayItem(k,n))).join('<br>')}<br>`;
- if(missing.length)breakdown+=`<br><b style="color:var(--red)">Still missing:</b><br>${missing.map(([k,n])=>'• '+escapeHtml(displayItem(k,n))).join('<br>')}<br>`;
- if(own.types.size)breakdown+=`<br><b>Manual type matching:</b> ${escapeHtml([...own.types].join(', '))}<br>`;
- if(!breakdown)breakdown='No ingredients reserved yet.';
- breakdown+='<span class="foot-note">✓ Confirms this entry: subtracts inputs from your recorded inventory and adds the crafted result. × Cancels: releases reservations without changing inventory.</span>';
- $('queueBreakdown').innerHTML=breakdown;
+ const missing=Object.values(currentQueueReport.missing).reduce((sum,n)=>sum+n,0);
+ const typeCount=currentQueueReport.types.size;
+ $('queueBreakdown').textContent=`${missing} materials missing${typeCount?` · ${typeCount} type matches needed`:''}`;
 }
-function refreshViews(){renderQueue();renderWorkshop();$('inventoryStat').textContent=(inventoryView==='item'?items:monsters).filter(n=>getStock(inventoryView,n)>0).length+' / '+(inventoryView==='item'?items:monsters).length+' stocked'}
+function refreshViews(){renderQueue();renderWorkshop()}
 function redraw(){rebuildData();renderInventory();refreshViews()}
 function queueItem(id){const x=queue.find(q=>q.id===id);if(x)x.qty++;else queue.push({id,qty:1});save();refreshViews();$('queuePopup').classList.remove('minimized');$('minimize').textContent='—';$('minimize').setAttribute('aria-expanded','true');}
 function mutateQueue(action,id){const x=queue.find(q=>q.id===id);if(!x)return;if(action==='minus'){x.qty--;if(x.qty<1)queue=queue.filter(q=>q.id!==id)}if(action==='plus')x.qty++;if(action==='cancel')queue=queue.filter(q=>q.id!==id);
@@ -5558,13 +9720,38 @@ $('craftTiers').addEventListener('click',e=>{const b=e.target.closest('[data-tie
 $('craftStations').addEventListener('click',e=>{const b=e.target.closest('[data-station]');if(!b)return;craftStation=b.dataset.station;rebuildFilters();renderWorkshop()});
 $('inventorySearch').addEventListener('input',renderInventory);$('craftSearch').addEventListener('input',renderWorkshop);
 $('craftBody').addEventListener('click',e=>{const card=e.target.closest('[data-id]');if(card){queueItem(card.dataset.id);return}const b=e.target.closest('[data-fill]');if(b)openRecipe(b.dataset.fill)});
-$('queueScroll').addEventListener('click',e=>{const btn=e.target.closest('[data-action]');if(btn)mutateQueue(btn.dataset.action,btn.dataset.id)});
+$('queueScroll').addEventListener('click',e=>{
+ const stockButton=e.target.closest('[data-stock-action]');
+ if(stockButton){const kind=stockButton.dataset.kind,name=stockButton.dataset.name,delta=stockButton.dataset.stockAction==='plus'?1:-1;stock[kind][name]=maxQty(getStock(kind,name)+delta);save();renderInventory();refreshViews();return}
+ const btn=e.target.closest('[data-action]');if(btn)mutateQueue(btn.dataset.action,btn.dataset.id);
+});
+for(const popup of [$('keywordPopup'),$('keywordPopupNested')]){
+ popup.addEventListener('mouseenter',()=>clearTimeout(popupHideTimer));
+ popup.addEventListener('mouseleave',e=>{if(!e.relatedTarget?.closest?.('.keyword-popup'))schedulePopupHide()});
+}
+document.addEventListener('mouseover',e=>{const word=e.target.closest?.('.keyword');if(!word)return;clearTimeout(popupInspectTimer);if(word.closest('.keyword-popup'))popupInspectTimer=setTimeout(()=>{if(word.isConnected&&word.matches(':hover'))showKeywordPopup(word)},350);else showKeywordPopup(word)});
+document.addEventListener('mouseout',e=>{const word=e.target.closest?.('.keyword');if(!word||word.contains(e.relatedTarget))return;clearTimeout(popupInspectTimer);if(!e.relatedTarget?.closest?.('.keyword-popup'))schedulePopupHide()});
+document.addEventListener('focusin',e=>{const word=e.target.closest?.('.keyword')||e.target.closest?.('.crafted')?.querySelector('.keyword');if(word)showKeywordPopup(word)});
+document.addEventListener('click',e=>{
+ const word=e.target.closest?.('.keyword');
+ if(word){showKeywordPopup(word);e.preventDefault();e.stopPropagation();return}
+ const recipe=e.target.closest?.('[data-popup-recipe]');
+ if(recipe){queueItem(recipe.dataset.popupRecipe);hideKeywordPopup();e.preventDefault();e.stopPropagation();return}
+},true);
+document.addEventListener('keydown',e=>{
+ if((e.key!=='Enter'&&e.key!==' ')||!e.target.matches?.('.keyword, .popup-recipe'))return;
+ e.preventDefault();e.target.click();
+});
 $('minimize').addEventListener('click',()=>{const p=$('queuePopup');p.classList.toggle('minimized');const on=!p.classList.contains('minimized');$('minimize').textContent=on?'—':'▢';$('minimize').setAttribute('aria-expanded',String(on))});
 $('clearQueue').addEventListener('click',()=>{queue=[];save();redraw();toast('Queue cleared. All reservations released.')});
 $('expandQueue').addEventListener('click',()=>{$('queuePopup').classList.toggle('minimized',false);$('minimize').textContent='—';$('queueScroll').scrollTo({top:0,behavior:'smooth'})});
 $('newRecipe').addEventListener('click',()=>openRecipe());$('cancelRecipe').addEventListener('click',closeRecipe);
+function closeInfo(){$('infoShade').classList.add('hidden');$('infoButton').focus()}
+$('infoButton').addEventListener('click',()=>{$('infoShade').classList.remove('hidden');$('closeInfo').focus()});
+$('closeInfo').addEventListener('click',closeInfo);
+$('infoShade').addEventListener('click',e=>{if(e.target===$('infoShade'))closeInfo()});
 $('modalShade').addEventListener('click',e=>{if(e.target===$('modalShade'))closeRecipe()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRecipe()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('infoShade').classList.contains('hidden'))closeInfo();else closeRecipe()}});
 $('recipeKind').addEventListener('change',()=>{$('recipeTierRow').hidden=$('recipeKind').value!=='monster';if($('recipeKind').value==='monster')$('recipeStation').value='Summoning'});
 $('recipeForm').addEventListener('submit',e=>{
  e.preventDefault();const kind=$('recipeKind').value,name=canonicalUserName($('recipeName').value,kind),station=$('recipeStation').value;
